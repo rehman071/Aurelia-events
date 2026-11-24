@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurelia Events | Couture Event Architecture &amp; Bespoke Experiences</title>
+
+  <!-- Google Fonts: Cormorant Garamond (High-Fashion Serif) & Manrope (Refined Modern Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Couture Atelier Theme Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            noir: '#081411',
+            emeraldNoir: '#0D1F1A',
+            emeraldDeep: '#132A23',
+            ivory: '#FAF7F2',
+            linen: '#F1EBE1',
+            bronze: '#C6A16E',
+            bronzeLight: '#D8B685',
+            bronzeMuted: '#9E7B4B',
+            espresso: '#1A1816',
+            stoneWarm: '#645E57'
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Manrope"', 'system-ui', 'sans-serif']
+          },
+          animation: {
+            'ken-burns': 'kenBurns 7.5s ease-out forwards',
+            'slide-progress': 'slideProgress 6s linear forwards',
+            'fade-up': 'fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards'
+          },
+          keyframes: {
+            kenBurns: {
+              '0%': { transform: 'scale(1)' },
+              '100%': { transform: 'scale(1.11)' }
+            },
+            slideProgress: {
+              '0%': { width: '0%' },
+              '100%': { width: '100%' }
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(14px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Editorial Micro-Interaction & Film Grain Enhancements -->
+  <style>
+    /* Subtle analog film grain texture for editorial depth */
+    .film-grain {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    }
+
+    /* Architectural staggered scroll-reveal transitions */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Luxury fill-slide button hover choreography */
+    .btn-couture {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .btn-couture::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #D8B685;
+      transform: translateX(-102%);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: -1;
+    }
+    .btn-couture:hover::before {
+      transform: translateX(0);
+    }
+
+    .btn-couture-dark {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .btn-couture-dark::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #C6A16E;
+      transform: translateY(102%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: -1;
+    }
+    .btn-couture-dark:hover::before {
+      transform: translateY(0);
+    }
+
+    /* Editorial minimalist underline input focus sweep */
+    .editorial-input {
+      background: transparent;
+      border-bottom: 1px solid rgba(26, 24, 22, 0.22);
+      transition: border-color 0.3s ease;
+    }
+    .editorial-input:focus {
+      outline: none;
+      border-bottom-color: #9E7B4B;
+    }
+    .editorial-input-dark {
+      background: transparent;
+      border-bottom: 1px solid rgba(250, 247, 242, 0.22);
+      transition: border-color 0.3s ease;
+    }
+    .editorial-input-dark:focus {
+      outline: none;
+      border-bottom-color: #C6A16E;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #081411; }
+    ::-webkit-scrollbar-thumb { background: #9E7B4B; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-ivory text-espresso font-sans antialiased overflow-x-hidden selection:bg-bronze/30 selection:text-espresso">
+
+  <!-- ===================================================================== -->
+  <!-- TOP 2PX SCROLL PROGRESS HAIRLINE                                      -->
+  <!-- ===================================================================== -->
+  <div class="fixed top-0 inset-x-0 z-[80] h-[2px] bg-transparent pointer-events-none">
+    <div id="scrollProgressBar" class="h-full w-0 bg-gradient-to-r from-bronzeMuted via-bronze to-bronzeLight transition-[width] duration-75"></div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FLOATING EDITORIAL GLASS PILL NAVIGATION                              -->
+  <!-- ===================================================================== -->
+  <header id="siteHeader" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 px-3 sm:px-6 pt-4">
+    <nav id="navShell" class="max-w-7xl mx-auto px-5 sm:px-8 h-16 sm:h-20 flex items-center justify-between rounded-full transition-all duration-500 border border-transparent bg-transparent" aria-label="Primary Navigation">
+      <!-- Brand Wordmark -->
+      <a href="#home" class="flex items-center gap-3.5 group focus:outline-none">
+        <div class="w-9 h-9 rounded-full border border-bronze/60 bg-noir/40 backdrop-blur-md flex items-center justify-center group-hover:border-bronzeLight group-hover:scale-105 transition-all">
+          <span class="font-serif text-lg italic text-bronze leading-none">A</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif text-xl sm:text-2xl font-medium tracking-[0.14em] text-ivory uppercase leading-none">Aurelia</span>
+          <span class="text-[9px] uppercase tracking-[0.34em] text-bronze font-medium mt-1">Couture Events</span>
+        </div>
+      </a>
+
+      <!-- Desktop Anchor Links with Active Spy -->
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="#services" data-nav-link="services" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Atelier</a>
+        <a href="#events" data-nav-link="events" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Calendar</a>
+        <a href="#packages" data-nav-link="packages" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Collections</a>
+        <a href="#testimonials" data-nav-link="testimonials" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Voices</a>
+        <a href="#team" data-nav-link="team" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Visionaries</a>
+        <a href="#contact" data-nav-link="contact" class="nav-anchor text-[11px] uppercase tracking-[0.22em] font-medium text-ivory/80 hover:text-bronzeLight transition-colors py-1 border-b border-transparent">Concierge</a>
+      </div>
+
+      <!-- Desktop CTA & Mobile Drawer Toggle -->
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          onclick="openBookingModal()"
+          class="hidden sm:inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-bronze text-noir font-semibold text-[11px] uppercase tracking-[0.2em] btn-couture shadow-lg shadow-noir/30 transition-all"
+        >
+          <span>Reserve Consultation</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobileMenuBtn"
+          type="button"
+          aria-label="Open Navigation Menu"
+          aria-expanded="false"
+          class="lg:hidden w-11 h-11 rounded-full bg-ivory/10 border border-ivory/20 backdrop-blur-md text-ivory flex items-center justify-center hover:border-bronze hover:text-bronze transition-colors"
+        >
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Full-Screen Editorial Mobile Navigation Drawer -->
+  <div id="mobileDrawer" class="fixed inset-0 z-[70] pointer-events-none opacity-0 transition-opacity duration-500">
+    <div class="absolute inset-0 bg-noir/95 backdrop-blur-2xl film-grain"></div>
+    <div class="relative h-full flex flex-col justify-between p-6 sm:p-10 max-w-xl mx-auto">
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between border-b border-ivory/10 pb-6">
+        <div class="flex items-center gap-3">
+          <span class="font-serif text-2xl tracking-[0.16em] text-ivory uppercase">Aurelia</span>
+          <span class="text-[10px] uppercase tracking-[0.3em] text-bronze">Atelier</span>
+        </div>
+        <button
+          type="button"
+          onclick="closeMobileDrawer()"
+          aria-label="Close Navigation Menu"
+          class="w-11 h-11 rounded-full border border-ivory/20 text-ivory flex items-center justify-center hover:border-bronze hover:text-bronze transition-colors"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Large Serif Navigation Links -->
+      <div class="flex flex-col gap-4 my-auto py-8">
+        <a href="#services" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">The Atelier</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">01</span>
+        </a>
+        <a href="#events" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">Curated Calendar</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">02</span>
+        </a>
+        <a href="#packages" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">Bespoke Collections</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">03</span>
+        </a>
+        <a href="#testimonials" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">Voices of Distinction</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">04</span>
+        </a>
+        <a href="#team" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">The Visionaries</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">05</span>
+        </a>
+        <a href="#contact" onclick="closeMobileDrawer()" class="group flex items-baseline justify-between py-2 border-b border-ivory/10">
+          <span class="font-serif text-3xl sm:text-4xl font-light text-ivory group-hover:text-bronzeLight group-hover:italic transition-all">Private Concierge</span>
+          <span class="text-[10px] tracking-[0.28em] text-bronze">06</span>
+        </a>
+      </div>
+
+      <!-- Bottom Drawer CTA -->
+      <div class="space-y-4">
+        <button
+          type="button"
+          onclick="closeMobileDrawer(); openBookingModal();"
+          class="w-full py-4 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] btn-couture"
+        >
+          Reserve Consultation
+        </button>
+        <p class="text-center text-[11px] tracking-[0.2em] uppercase text-ivory/50">New York &bull; Paris &bull; Mumbai &bull; Dubai</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 1. CINEMATIC HERO SECTION WITH BACKGROUND PHOTOGRAPHY SLIDESHOW       -->
+  <!-- ===================================================================== -->
+  <section id="home" class="relative min-h-screen flex flex-col justify-between pt-28 pb-8 sm:pb-12 overflow-hidden bg-noir text-ivory">
+    <!-- Full-Bleed Background Photography Slideshow -->
+    <div id="heroSlidesContainer" class="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gradient-to-br from-emeraldNoir via-noir to-[#040B09]" aria-hidden="true">
+      <!-- Populated dynamically via renderHeroSlides() -->
+    </div>
+
+    <!-- Editorial Emerald-Obsidian Vignette & Subtle Film Grain Overlay -->
+    <div class="pointer-events-none absolute inset-0 z-[2]" aria-hidden="true">
+      <div class="absolute inset-0 bg-gradient-to-b from-noir/80 via-emeraldNoir/45 to-noir"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,20,17,0.18)_0%,rgba(8,20,17,0.88)_100%)]"></div>
+      <div class="absolute inset-0 film-grain opacity-70"></div>
+      <!-- Subtle architectural corner hairline frame (Desktop) -->
+      <div class="hidden xl:block absolute inset-x-10 top-24 bottom-8 border border-ivory/[0.07] rounded-[2rem]"></div>
+    </div>
+
+    <!-- Hero Center Editorial Typography -->
+    <div class="relative z-10 max-w-6xl mx-auto px-5 sm:px-8 my-auto py-12 sm:py-16 text-center">
+      <!-- Micro-Label Kicker -->
+      <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-noir/55 border border-bronze/35 backdrop-blur-md mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-bronze animate-pulse"></span>
+        <span class="text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-bronzeLight font-medium">Bespoke Event Architecture &bull; Est. 2014</span>
+      </div>
+
+      <!-- High-Fashion Serif Headline -->
+      <h1 class="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light text-ivory tracking-tight leading-[1.03] max-w-5xl mx-auto drop-shadow-[0_6px_30px_rgba(0,0,0,0.55)]">
+        Curating Moments of
+        <span class="block italic font-normal text-bronzeLight mt-1 sm:mt-2">Timeless Grandeur</span>
+      </h1>
+
+      <!-- Editorial Subtitle -->
+      <p class="mt-7 text-sm sm:text-base md:text-lg text-ivory/80 max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
+        An international atelier designing candlelit couture weddings, architectural corporate summits, and private soirées with effortless grace and theatrical precision.
+      </p>
+
+      <!-- Dual Couture CTA Buttons -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <button
+          type="button"
+          onclick="openBookingModal()"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-9 py-4 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] btn-couture shadow-2xl shadow-noir/50 transition-transform hover:-translate-y-0.5"
+        >
+          <span>Commission an Event</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </button>
+
+        <a
+          href="#events"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-9 py-4 rounded-full bg-noir/45 border border-ivory/30 text-ivory font-medium text-xs uppercase tracking-[0.22em] backdrop-blur-md hover:border-bronze hover:text-bronzeLight hover:bg-noir/70 transition-all"
+        >
+          <span>Explore Calendar</span>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-bronze"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Elegant Bottom Bar: Scene Switcher with 6s Progress Lines + 4 Hairline Metrics -->
+    <div class="relative z-10 max-w-7xl mx-auto w-full px-5 sm:px-8 space-y-6">
+      <!-- Interactive 4-Scene Photography Switcher -->
+      <div id="heroSceneSwitcher" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-4xl mx-auto" role="tablist" aria-label="Hero background photography scenes">
+        <!-- Populated dynamically via renderHeroSlides() -->
+      </div>
+
+      <!-- 4 Animated Count-Up Metrics Separated by Fine Vertical Hairlines -->
+      <div id="heroStatsBar" class="rounded-2xl sm:rounded-full bg-noir/70 backdrop-blur-xl border border-ivory/15 px-6 sm:px-10 py-5 sm:py-6 shadow-2xl">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-4 lg:gap-0 lg:divide-x lg:divide-ivory/15">
+          <div class="text-center px-3">
+            <div class="font-serif text-3xl sm:text-4xl font-light text-bronzeLight tracking-tight">
+              <span class="stat-counter" data-target="500" data-suffix="+">0</span>
+            </div>
+            <p class="mt-1 text-[10px] uppercase tracking-[0.24em] text-ivory/70 font-medium">Bespoke Events</p>
+          </div>
+          <div class="text-center px-3">
+            <div class="font-serif text-3xl sm:text-4xl font-light text-bronzeLight tracking-tight">
+              <span class="stat-counter" data-target="98" data-suffix="%">0</span>
+            </div>
+            <p class="mt-1 text-[10px] uppercase tracking-[0.24em] text-ivory/70 font-medium">Client Retention</p>
+          </div>
+          <div class="text-center px-3">
+            <div class="font-serif text-3xl sm:text-4xl font-light text-bronzeLight tracking-tight">
+              <span class="stat-counter" data-target="45" data-suffix="+">0</span>
+            </div>
+            <p class="mt-1 text-[10px] uppercase tracking-[0.24em] text-ivory/70 font-medium">Iconic Venues</p>
+          </div>
+          <div class="text-center px-3">
+            <div class="font-serif text-3xl sm:text-4xl font-light text-bronzeLight tracking-tight">
+              <span class="stat-counter" data-target="12" data-suffix="+">0</span>
+            </div>
+            <p class="mt-1 text-[10px] uppercase tracking-[0.24em] text-ivory/70 font-medium">Years of Craft</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 2. SERVICES SECTION — THE ATELIER OF EXPERIENCES (#services)          -->
+  <!-- ===================================================================== -->
+  <section id="services" class="py-24 lg:py-32 bg-ivory text-espresso relative">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8">
+      <!-- Editorial Asymmetric Header -->
+      <div class="reveal flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-espresso/12">
+        <div class="max-w-2xl">
+          <p class="text-[11px] uppercase tracking-[0.3em] text-bronzeMuted font-semibold mb-4">01 &mdash; Our Craft</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-espresso leading-[1.08]">
+            The Atelier of <span class="italic text-bronzeMuted">Experiences</span>
+          </h2>
+        </div>
+        <p class="text-sm sm:text-base text-stoneWarm max-w-md leading-relaxed font-light">
+          Six specialized disciplines guided by architectural sensibility, bespoke floral artistry, and unobtrusive white-glove choreography.
+        </p>
+      </div>
+
+      <!-- 6 Editorial Photo-Backed / Split Service Cards -->
+      <div id="servicesGrid" class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Populated dynamically via renderServices() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 3. UPCOMING EVENTS SECTION — CURATED CALENDAR (#events)               -->
+  <!-- ===================================================================== -->
+  <section id="events" class="py-24 lg:py-32 bg-linen text-espresso relative border-y border-espresso/10">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8">
+      <!-- Header + Interactive Filter Pills -->
+      <div class="reveal flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14">
+        <div class="max-w-xl">
+          <p class="text-[11px] uppercase tracking-[0.3em] text-bronzeMuted font-semibold mb-4">02 &mdash; Season 2026 &ndash; 2027</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-espresso leading-[1.08]">
+            Curated <span class="italic text-bronzeMuted">Calendar</span>
+          </h2>
+          <p class="mt-4 text-sm sm:text-base text-stoneWarm font-light leading-relaxed">
+            Reserve private seats at our upcoming flagship galas, executive forums, and couture showcases across premier destinations.
+          </p>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div id="eventFilterTabs" class="flex flex-wrap gap-2.5" role="tablist" aria-label="Filter curated events">
+          <button type="button" data-category="All" class="event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold transition-all bg-noir text-ivory shadow-md">
+            All
+          </button>
+          <button type="button" data-category="Corporate" class="event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium transition-all bg-ivory text-stoneWarm border border-espresso/15 hover:border-bronzeMuted hover:text-espresso">
+            Corporate
+          </button>
+          <button type="button" data-category="Music & Gala" class="event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium transition-all bg-ivory text-stoneWarm border border-espresso/15 hover:border-bronzeMuted hover:text-espresso">
+            Music &amp; Gala
+          </button>
+          <button type="button" data-category="Expo & Tech" class="event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium transition-all bg-ivory text-stoneWarm border border-espresso/15 hover:border-bronzeMuted hover:text-espresso">
+            Expo &amp; Tech
+          </button>
+        </div>
+      </div>
+
+      <!-- Magazine-Style Event Cards Grid -->
+      <div id="eventsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-9">
+        <!-- Populated dynamically via renderEvents() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 4. PACKAGES SECTION — BESPOKE COLLECTIONS (#packages)                 -->
+  <!-- ===================================================================== -->
+  <section id="packages" class="py-24 lg:py-32 bg-ivory text-espresso">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8">
+      <!-- Centered Editorial Header + Animated Segmented Toggle -->
+      <div class="reveal max-w-3xl mx-auto text-center">
+        <p class="text-[11px] uppercase tracking-[0.3em] text-bronzeMuted font-semibold mb-4">03 &mdash; Commissions &amp; Tiers</p>
+        <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-espresso leading-[1.08]">
+          Bespoke <span class="italic text-bronzeMuted">Collections</span>
+        </h2>
+        <p class="mt-4 text-sm sm:text-base text-stoneWarm font-light leading-relaxed max-w-xl mx-auto">
+          Transparent production frameworks meticulously sculpted for intimate social milestones or landmark corporate gatherings.
+        </p>
+
+        <!-- Smooth Animated Segmented Toggle -->
+        <div class="mt-10 inline-grid grid-cols-2 relative p-1.5 rounded-full bg-linen border border-espresso/12 shadow-inner">
+          <!-- Sliding Indicator Pill -->
+          <div id="packageToggleIndicator" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] rounded-full bg-noir shadow-md transition-transform duration-300 ease-out"></div>
+
+          <button
+            id="toggleSocialBtn"
+            type="button"
+            onclick="setPackageMode('social')"
+            class="relative z-10 px-6 sm:px-8 py-3 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold text-ivory transition-colors duration-300"
+          >
+            Social Soirées
+          </button>
+          <button
+            id="toggleCorporateBtn"
+            type="button"
+            onclick="setPackageMode('corporate')"
+            class="relative z-10 px-6 sm:px-8 py-3 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold text-stoneWarm hover:text-espresso transition-colors duration-300"
+          >
+            Corporate Galas
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Refined Collection Cards -->
+      <div id="packagesGrid" class="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <!-- Populated dynamically via renderPackages() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 5. CLIENT TESTIMONIALS — VOICES OF DISTINCTION (#testimonials)        -->
+  <!-- ===================================================================== -->
+  <section id="testimonials" class="py-24 lg:py-32 bg-noir text-ivory relative overflow-hidden">
+    <!-- Subtle Film Grain & Architectural Hairlines -->
+    <div class="pointer-events-none absolute inset-0 film-grain opacity-65"></div>
+    <div class="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-bronze/40 to-transparent"></div>
+    <div class="pointer-events-none absolute -top-24 right-10 font-serif italic text-[22rem] leading-none text-bronze/[0.06] select-none" aria-hidden="true">&ldquo;</div>
+
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 relative z-10">
+      <!-- Top Bar: Kicker + Auto-Play Toggle & Circular Controls -->
+      <div class="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-10 border-b border-ivory/12">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-bronze font-semibold mb-4">04 &mdash; Patron Reflections</p>
+          <h2 class="font-serif text-4xl sm:text-5xl font-light text-ivory leading-tight">
+            Voices of <span class="italic text-bronzeLight">Distinction</span>
+          </h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="autoPlayBtn"
+            type="button"
+            onclick="toggleTestimonialAutoplay()"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-ivory/15 bg-emeraldNoir/60 text-[10px] uppercase tracking-[0.22em] text-ivory/80 hover:border-bronze hover:text-bronzeLight transition-colors"
+          >
+            <i data-lucide="pause" id="autoPlayIcon" class="w-3.5 h-3.5 text-bronze"></i>
+            <span id="autoPlayLabel">Auto-Play</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="prevTestimonial()"
+            aria-label="Previous testimonial"
+            class="w-11 h-11 rounded-full border border-ivory/20 flex items-center justify-center text-ivory hover:bg-bronze hover:text-noir hover:border-bronze transition-all"
+          >
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          </button>
+          <button
+            type="button"
+            onclick="nextTestimonial()"
+            aria-label="Next testimonial"
+            class="w-11 h-11 rounded-full border border-ivory/20 flex items-center justify-center text-ivory hover:bg-bronze hover:text-noir hover:border-bronze transition-all"
+          >
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Editorial Quote Showcase -->
+      <div id="testimonialStage" class="py-12 sm:py-16 min-h-[300px] flex flex-col justify-center">
+        <!-- Populated dynamically via renderTestimonials() -->
+      </div>
+
+      <!-- Progress Line Indicators -->
+      <div id="testimonialIndicators" class="flex items-center gap-3 pt-4 border-t border-ivory/10">
+        <!-- Populated dynamically via renderTestimonials() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 6. TEAM SECTION — THE VISIONARIES (#team)                             -->
+  <!-- ===================================================================== -->
+  <section id="team" class="py-24 lg:py-32 bg-linen text-espresso">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8">
+      <!-- Editorial Header -->
+      <div class="reveal flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-espresso/12">
+        <div class="max-w-2xl">
+          <p class="text-[11px] uppercase tracking-[0.3em] text-bronzeMuted font-semibold mb-4">05 &mdash; Creative Leadership</p>
+          <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-espresso leading-[1.08]">
+            The <span class="italic text-bronzeMuted">Visionaries</span>
+          </h2>
+        </div>
+        <p class="text-sm sm:text-base text-stoneWarm max-w-md leading-relaxed font-light">
+          Architects, scenographers, and production directors devoted to translating personal taste into unforgettable living environments.
+        </p>
+      </div>
+
+      <!-- 4 Architectural Portrait Cards -->
+      <div id="teamGrid" class="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Populated dynamically via renderTeam() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 7. CONTACT & CONCIERGE SECTION (#contact)                             -->
+  <!-- ===================================================================== -->
+  <section id="contact" class="py-24 lg:py-32 bg-ivory text-espresso">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8">
+      <div class="reveal grid grid-cols-1 lg:grid-cols-12 rounded-[2rem] overflow-hidden border border-espresso/12 shadow-2xl shadow-espresso/5">
+        <!-- Left Column: Deep Velvet Emerald-Noir Private Concierge Card -->
+        <div class="lg:col-span-5 bg-emeraldNoir text-ivory p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden">
+          <div class="pointer-events-none absolute inset-0 film-grain opacity-60"></div>
+          <div class="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-bronze/10 blur-[90px]"></div>
+
+          <div class="relative z-10 space-y-8">
+            <div>
+              <p class="text-[11px] uppercase tracking-[0.3em] text-bronze font-semibold mb-4">06 &mdash; Private Concierge</p>
+              <h2 class="font-serif text-4xl sm:text-5xl font-light text-ivory leading-[1.08]">
+                Begin Your <span class="italic text-bronzeLight">Commission</span>
+              </h2>
+              <p class="mt-4 text-sm text-ivory/70 font-light leading-relaxed">
+                Every inquiry is reviewed privately by a Senior Producer. Expect a bespoke concept brief within 24 hours.
+              </p>
+            </div>
+
+            <!-- Contact Details with One-Click Copy Buttons -->
+            <div class="space-y-6 pt-4 border-t border-ivory/12">
+              <!-- Studio Address -->
+              <div class="flex items-start gap-4">
+                <i data-lucide="map-pin" class="w-4 h-4 text-bronze mt-1 shrink-0"></i>
+                <div>
+                  <p class="text-[10px] uppercase tracking-[0.24em] text-ivory/50 font-semibold">Flagship Atelier</p>
+                  <p class="text-sm text-ivory/90 mt-1 leading-relaxed">450 Aurelia Plaza, Penthouse Suite<br />SoHo Design District, New York, NY 10013</p>
+                </div>
+              </div>
+
+              <!-- Direct Phone + Copy -->
+              <div class="flex items-start gap-4">
+                <i data-lucide="phone" class="w-4 h-4 text-bronze mt-1 shrink-0"></i>
+                <div class="flex-1">
+                  <p class="text-[10px] uppercase tracking-[0.24em] text-ivory/50 font-semibold">Private Line</p>
+                  <div class="flex flex-wrap items-center gap-3 mt-1">
+                    <a href="tel:+15558924400" class="text-sm text-ivory hover:text-bronzeLight transition-colors">+1 (555) 892-4400</a>
+                    <button
+                      type="button"
+                      onclick="copyTextToClipboard('+1 (555) 892-4400', 'Private concierge number copied.')"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-bronze/40 text-[10px] uppercase tracking-[0.18em] text-bronzeLight hover:bg-bronze hover:text-noir transition-colors"
+                    >
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Concierge Email + Copy -->
+              <div class="flex items-start gap-4">
+                <i data-lucide="mail" class="w-4 h-4 text-bronze mt-1 shrink-0"></i>
+                <div class="flex-1">
+                  <p class="text-[10px] uppercase tracking-[0.24em] text-ivory/50 font-semibold">Atelier Desk</p>
+                  <div class="flex flex-wrap items-center gap-3 mt-1">
+                    <a href="mailto:concierge@aureliaevents.com" class="text-sm text-ivory hover:text-bronzeLight transition-colors break-all">concierge@aureliaevents.com</a>
+                    <button
+                      type="button"
+                      onclick="copyTextToClipboard('concierge@aureliaevents.com', 'Concierge email copied.')"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-bronze/40 text-[10px] uppercase tracking-[0.18em] text-bronzeLight hover:bg-bronze hover:text-noir transition-colors"
+                    >
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Operating Hours -->
+              <div class="flex items-start gap-4">
+                <i data-lucide="clock" class="w-4 h-4 text-bronze mt-1 shrink-0"></i>
+                <div>
+                  <p class="text-[10px] uppercase tracking-[0.24em] text-ivory/50 font-semibold">Atelier Hours</p>
+                  <p class="text-sm text-ivory/90 mt-1">Mon &ndash; Fri: 9:00 AM &ndash; 7:30 PM EST</p>
+                  <p class="text-xs text-ivory/55 mt-0.5">Sat &ndash; Sun: Private Appointments Only</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Global City Atelier Badges -->
+          <div class="relative z-10 mt-10 pt-6 border-t border-ivory/12">
+            <p class="text-[10px] uppercase tracking-[0.28em] text-ivory/50 font-semibold mb-3">Global Ateliers</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-full border border-ivory/15 bg-noir/40 text-[10px] uppercase tracking-[0.2em] text-bronzeLight">New York</span>
+              <span class="px-3 py-1.5 rounded-full border border-ivory/15 bg-noir/40 text-[10px] uppercase tracking-[0.2em] text-ivory/80">Paris</span>
+              <span class="px-3 py-1.5 rounded-full border border-ivory/15 bg-noir/40 text-[10px] uppercase tracking-[0.2em] text-ivory/80">Mumbai</span>
+              <span class="px-3 py-1.5 rounded-full border border-ivory/15 bg-noir/40 text-[10px] uppercase tracking-[0.2em] text-ivory/80">Dubai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Airy Silk Ivory Minimalist Editorial Inquiry Form -->
+        <div class="lg:col-span-7 bg-ivory p-8 sm:p-12 lg:p-14">
+          <form id="contactForm" novalidate class="space-y-8">
+            <div class="pb-2">
+              <h3 class="font-serif text-3xl font-normal text-espresso">Event Inquiry Dossier</h3>
+              <p class="text-xs text-stoneWarm mt-1 tracking-wide">Kindly share the key details of your upcoming occasion.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div>
+                <label for="contactName" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Full Name *</label>
+                <input id="contactName" type="text" required placeholder="Priya Kapoor" class="editorial-input w-full py-2.5 text-sm text-espresso placeholder-stoneWarm/45" />
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+              <div>
+                <label for="contactEmail" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Email Address *</label>
+                <input id="contactEmail" type="email" required placeholder="priya@domain.com" class="editorial-input w-full py-2.5 text-sm text-espresso placeholder-stoneWarm/45" />
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div>
+                <label for="contactPhone" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Telephone *</label>
+                <input id="contactPhone" type="tel" required placeholder="+1 (555) 234-5678" class="editorial-input w-full py-2.5 text-sm text-espresso placeholder-stoneWarm/45" />
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+              <div>
+                <label for="contactEventType" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Experience Category *</label>
+                <select id="contactEventType" required class="editorial-input w-full py-2.5 text-sm text-espresso bg-transparent">
+                  <option value="">Select discipline...</option>
+                  <option value="Couture Weddings">Couture Weddings</option>
+                  <option value="Executive Summits">Executive Summits</option>
+                  <option value="Symphony & Live Galas">Symphony &amp; Live Galas</option>
+                  <option value="Luxury Brand Launches">Luxury Brand Launches</option>
+                  <option value="Milestone Soirées">Milestone Soirées</option>
+                  <option value="Global Hybrid Forums">Global Hybrid Forums</option>
+                </select>
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div>
+                <label for="contactDate" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Preferred Date *</label>
+                <input id="contactDate" type="date" min="2026-11-24" required class="editorial-input w-full py-2.5 text-sm text-espresso" />
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+              <div>
+                <label for="contactBudget" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Estimated Investment *</label>
+                <select id="contactBudget" required class="editorial-input w-full py-2.5 text-sm text-espresso bg-transparent">
+                  <option value="">Select investment range...</option>
+                  <option value="$10,000 – $25,000">$10,000 &ndash; $25,000</option>
+                  <option value="$25,000 – $60,000">$25,000 &ndash; $60,000</option>
+                  <option value="$60,000 – $150,000">$60,000 &ndash; $150,000</option>
+                  <option value="$150,000+ (Bespoke Imperial)">$150,000+ (Bespoke Imperial)</option>
+                </select>
+                <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+              </div>
+            </div>
+
+            <div>
+              <label for="contactMessage" class="block text-[10px] uppercase tracking-[0.24em] text-stoneWarm font-semibold mb-2">Creative Vision &amp; Notes *</label>
+              <textarea id="contactMessage" rows="3" required placeholder="Share your preferred destination, guest count, aesthetic inspiration, or musical preferences..." class="editorial-input w-full py-2.5 text-sm text-espresso placeholder-stoneWarm/45 resize-none"></textarea>
+              <p class="error-msg hidden text-[11px] text-rose-700 mt-1.5"></p>
+            </div>
+
+            <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <span class="text-[11px] text-stoneWarm">Strictly confidential &bull; NDA available on request</span>
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center gap-3 px-9 py-4 rounded-full bg-noir text-ivory font-semibold text-xs uppercase tracking-[0.22em] btn-couture-dark hover:text-noir transition-colors shadow-lg"
+              >
+                <span>Submit Dossier</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </form>
+
+          <!-- Elegant Confirmation State -->
+          <div id="contactSuccessState" class="hidden h-full flex flex-col items-center justify-center text-center py-12 space-y-5 animate-fade-up">
+            <div class="w-16 h-16 rounded-full border border-bronze bg-linen flex items-center justify-center">
+              <i data-lucide="check" class="w-7 h-7 text-bronzeMuted"></i>
+            </div>
+            <p class="text-[10px] uppercase tracking-[0.3em] text-bronzeMuted font-semibold">Dossier Received</p>
+            <h3 class="font-serif text-4xl font-light text-espresso">Thank You for Reaching Out</h3>
+            <p id="contactSuccessSummary" class="text-sm text-stoneWarm max-w-md leading-relaxed font-light"></p>
+            <div class="pt-4">
+              <button
+                type="button"
+                onclick="resetContactForm()"
+                class="px-7 py-3 rounded-full border border-espresso/20 text-[11px] uppercase tracking-[0.2em] font-semibold text-espresso hover:bg-noir hover:text-ivory transition-colors"
+              >
+                Send Another Inquiry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 8. EDITORIAL LUXURY FOOTER                                            -->
+  <!-- ===================================================================== -->
+  <footer class="bg-noir text-ivory/70 pt-20 pb-12 border-t border-bronze/20 relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-0 film-grain opacity-50"></div>
+
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-ivory/10">
+        <!-- Brand Wordmark & Ethos -->
+        <div class="lg:col-span-4 space-y-5">
+          <a href="#home" class="inline-flex items-center gap-3.5">
+            <div class="w-9 h-9 rounded-full border border-bronze/60 flex items-center justify-center">
+              <span class="font-serif text-lg italic text-bronze">A</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-serif text-2xl font-medium tracking-[0.16em] text-ivory uppercase leading-none">Aurelia</span>
+              <span class="text-[9px] uppercase tracking-[0.34em] text-bronze mt-1">Couture Events</span>
+            </div>
+          </a>
+          <p class="text-sm font-light leading-relaxed text-ivory/60 max-w-sm">
+            Crafting iconic weddings, architectural executive summits, and cultural galas defined by atmosphere, intimacy, and enduring grace.
+          </p>
+          <div class="flex items-center gap-3 pt-1">
+            <button type="button" onclick="showToast('Opening Aurelia Editorial Instagram', 'info')" aria-label="Instagram" class="w-9 h-9 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/70 hover:border-bronze hover:text-bronzeLight transition-colors">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </button>
+            <button type="button" onclick="showToast('Opening Aurelia LinkedIn Showcase', 'info')" aria-label="LinkedIn" class="w-9 h-9 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/70 hover:border-bronze hover:text-bronzeLight transition-colors">
+              <i data-lucide="linkedin" class="w-4 h-4"></i>
+            </button>
+            <button type="button" onclick="showToast('Opening Aurelia Film Archive', 'info')" aria-label="YouTube" class="w-9 h-9 rounded-full border border-ivory/15 flex items-center justify-center text-ivory/70 hover:border-bronze hover:text-bronzeLight transition-colors">
+              <i data-lucide="youtube" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="lg:col-span-2 space-y-4">
+          <h4 class="text-[10px] uppercase tracking-[0.28em] text-bronze font-semibold">Navigation</h4>
+          <ul class="space-y-3 text-sm font-light">
+            <li><a href="#services" class="hover:text-bronzeLight transition-colors">The Atelier</a></li>
+            <li><a href="#events" class="hover:text-bronzeLight transition-colors">Curated Calendar</a></li>
+            <li><a href="#packages" class="hover:text-bronzeLight transition-colors">Collections</a></li>
+            <li><a href="#testimonials" class="hover:text-bronzeLight transition-colors">Voices</a></li>
+            <li><a href="#team" class="hover:text-bronzeLight transition-colors">The Visionaries</a></li>
+          </ul>
+        </div>
+
+        <!-- Disciplines -->
+        <div class="lg:col-span-3 space-y-4">
+          <h4 class="text-[10px] uppercase tracking-[0.28em] text-bronze font-semibold">Disciplines</h4>
+          <ul class="space-y-3 text-sm font-light">
+            <li><button type="button" onclick="openBookingModal('Couture Weddings')" class="hover:text-bronzeLight transition-colors text-left">Couture Weddings</button></li>
+            <li><button type="button" onclick="openBookingModal('Executive Summits')" class="hover:text-bronzeLight transition-colors text-left">Executive Summits</button></li>
+            <li><button type="button" onclick="openBookingModal('Symphony & Live Galas')" class="hover:text-bronzeLight transition-colors text-left">Symphony &amp; Live Galas</button></li>
+            <li><button type="button" onclick="openBookingModal('Luxury Brand Launches')" class="hover:text-bronzeLight transition-colors text-left">Luxury Brand Launches</button></li>
+            <li><button type="button" onclick="openBookingModal('Global Hybrid Forums')" class="hover:text-bronzeLight transition-colors text-left">Global Hybrid Forums</button></li>
+          </ul>
+        </div>
+
+        <!-- Editorial Newsletter -->
+        <div class="lg:col-span-3 space-y-4">
+          <h4 class="text-[10px] uppercase tracking-[0.28em] text-bronze font-semibold">The Aurelia Dispatch</h4>
+          <p class="text-sm font-light text-ivory/60 leading-relaxed">
+            Seasonal scenography essays, private salon invitations, and global venue dispatches.
+          </p>
+          <form id="newsletterForm" novalidate class="pt-2 space-y-3">
+            <input
+              id="newsletterEmail"
+              type="email"
+              required
+              placeholder="Your email address"
+              class="editorial-input-dark w-full py-2.5 text-sm text-ivory placeholder-ivory/40"
+            />
+            <button
+              type="submit"
+              class="w-full py-3 rounded-full border border-bronze/60 text-bronzeLight text-[11px] uppercase tracking-[0.22em] font-semibold hover:bg-bronze hover:text-noir transition-colors"
+            >
+              Subscribe to Dispatch
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Copyright Strip -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-light text-ivory/45">
+        <p>&copy; 2026 Aurelia Events Atelier. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="#contact" class="hover:text-bronzeLight transition-colors">Privacy Charter</a>
+          <a href="#contact" class="hover:text-bronzeLight transition-colors">Terms of Commission</a>
+          <a href="#home" class="inline-flex items-center gap-1.5 text-bronze hover:text-bronzeLight uppercase tracking-[0.2em] text-[10px] font-semibold">
+            <span>Top</span>
+            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: GLASSMORPHIC BOOKING CONSULTATION MODAL                      -->
+  <!-- ===================================================================== -->
+  <div id="bookingModal" class="hidden fixed inset-0 z-[75] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="bookingModalTitle">
+    <div class="absolute inset-0 bg-noir/80 backdrop-blur-md" onclick="closeAllModals()"></div>
+
+    <div class="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-emeraldNoir/95 border border-bronze/35 text-ivory shadow-2xl p-7 sm:p-10 animate-fade-up">
+      <button
+        type="button"
+        onclick="closeAllModals()"
+        aria-label="Close booking modal"
+        class="absolute top-6 right-6 w-10 h-10 rounded-full border border-ivory/15 text-ivory/70 hover:border-bronze hover:text-bronzeLight flex items-center justify-center transition-colors"
+      >
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Form State -->
+      <div id="bookingFormView">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-bronze font-semibold">Private Consultation</p>
+        <h3 id="bookingModalTitle" class="font-serif text-3xl sm:text-4xl font-light text-ivory mt-1">Commission an Event</h3>
+
+        <!-- Dynamic Pre-Selected Service / Collection Tag -->
+        <div id="bookingContextPill" class="hidden mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bronze/15 border border-bronze/40 text-xs text-bronzeLight">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-bronze"></i>
+          <span id="bookingContextText"></span>
+        </div>
+
+        <form id="bookingForm" novalidate class="mt-7 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label for="bookName" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Full Name *</label>
+              <input id="bookName" type="text" required placeholder="Elena Rostova" class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35" />
+            </div>
+            <div>
+              <label for="bookEmail" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Email Address *</label>
+              <input id="bookEmail" type="email" required placeholder="elena@maison.com" class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label for="bookService" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Discipline *</label>
+              <select id="bookService" required class="editorial-input-dark w-full py-2 text-sm text-ivory bg-emeraldNoir">
+                <option value="Couture Weddings">Couture Weddings</option>
+                <option value="Executive Summits">Executive Summits</option>
+                <option value="Symphony & Live Galas">Symphony &amp; Live Galas</option>
+                <option value="Luxury Brand Launches">Luxury Brand Launches</option>
+                <option value="Milestone Soirées">Milestone Soirées</option>
+                <option value="Global Hybrid Forums">Global Hybrid Forums</option>
+              </select>
+            </div>
+            <div>
+              <label for="bookPackage" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Collection Tier</label>
+              <select id="bookPackage" class="editorial-input-dark w-full py-2 text-sm text-ivory bg-emeraldNoir">
+                <option value="Bespoke Consultation">Bespoke / Undecided</option>
+                <option value="Essential Spark">Essential Spark</option>
+                <option value="Signature Couture">Signature Couture (Most Requested)</option>
+                <option value="Imperial Bespoke">Imperial Bespoke</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label for="bookDate" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Target Date *</label>
+              <input id="bookDate" type="date" min="2026-11-24" required class="editorial-input-dark w-full py-2 text-sm text-ivory [color-scheme:dark]" />
+            </div>
+            <div>
+              <label for="bookGuests" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Estimated Guests *</label>
+              <input id="bookGuests" type="number" min="10" max="20000" required placeholder="200" class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35" />
+            </div>
+          </div>
+
+          <div>
+            <label for="bookNotes" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Destination &amp; Notes</label>
+            <textarea id="bookNotes" rows="2" placeholder="City, venue wishlist, or atmosphere notes..." class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35 resize-none"></textarea>
+          </div>
+
+          <p id="bookingErrorMsg" class="hidden text-xs text-rose-300"></p>
+
+          <button type="submit" class="w-full py-4 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] btn-couture shadow-xl">
+            Request Private Consultation
+          </button>
+        </form>
+      </div>
+
+      <!-- Luxury Confirmation State -->
+      <div id="bookingSuccessView" class="hidden text-center py-6 space-y-5">
+        <div class="w-16 h-16 rounded-full border border-bronze bg-noir/50 flex items-center justify-center mx-auto">
+          <i data-lucide="check" class="w-7 h-7 text-bronzeLight"></i>
+        </div>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-bronze font-semibold">Consultation Reserved</p>
+        <h3 class="font-serif text-3xl sm:text-4xl font-light text-ivory">Your Proposal Is In Motion</h3>
+        <p id="bookingSuccessSummary" class="text-sm text-ivory/75 leading-relaxed max-w-md mx-auto font-light"></p>
+        <div id="bookingRefBadge" class="inline-block px-5 py-2 rounded-full border border-bronze/40 bg-noir/60 text-xs font-mono tracking-wider text-bronzeLight"></div>
+        <div class="pt-3">
+          <button type="button" onclick="closeAllModals()" class="px-9 py-3 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.2em] hover:bg-bronzeLight transition-colors">
+            Return to Atelier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: EVENT RSVP MODAL & STYLIZED DIGITAL VIP PASS                 -->
+  <!-- ===================================================================== -->
+  <div id="rsvpModal" class="hidden fixed inset-0 z-[75] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="rsvpModalTitle">
+    <div class="absolute inset-0 bg-noir/80 backdrop-blur-md" onclick="closeAllModals()"></div>
+
+    <div class="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] bg-emeraldNoir/95 border border-bronze/35 text-ivory shadow-2xl p-7 sm:p-9 animate-fade-up">
+      <button
+        type="button"
+        onclick="closeAllModals()"
+        aria-label="Close RSVP modal"
+        class="absolute top-6 right-6 w-10 h-10 rounded-full border border-ivory/15 text-ivory/70 hover:border-bronze hover:text-bronzeLight flex items-center justify-center transition-colors"
+      >
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- RSVP Form View -->
+      <div id="rsvpFormView">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-bronze font-semibold">Curated Guest List</p>
+        <h3 id="rsvpModalTitle" class="font-serif text-3xl font-light text-ivory mt-1">Reserve Your Seat</h3>
+
+        <!-- Selected Event Summary -->
+        <div class="mt-5 p-4 rounded-2xl bg-noir/60 border border-ivory/10 space-y-1.5">
+          <p id="rsvpEventTitle" class="font-serif text-xl text-bronzeLight"></p>
+          <p id="rsvpEventMeta" class="text-xs text-ivory/70"></p>
+          <div class="flex items-center justify-between pt-2 text-xs">
+            <span id="rsvpEventPriceLabel" class="font-semibold text-ivory"></span>
+            <span id="rsvpRemainingBadge" class="px-3 py-0.5 rounded-full bg-bronze/15 border border-bronze/30 text-bronzeLight text-[11px]"></span>
+          </div>
+        </div>
+
+        <form id="rsvpForm" novalidate class="mt-6 space-y-5">
+          <div>
+            <label for="rsvpName" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Guest Full Name *</label>
+            <input id="rsvpName" type="text" required placeholder="Aarav Mehta" class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35" />
+          </div>
+
+          <div>
+            <label for="rsvpEmail" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Digital Pass Email *</label>
+            <input id="rsvpEmail" type="email" required placeholder="aarav@example.com" class="editorial-input-dark w-full py-2 text-sm text-ivory placeholder-ivory/35" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-5 items-end pt-1">
+            <div>
+              <label for="rsvpGuestCount" class="block text-[10px] uppercase tracking-[0.22em] text-ivory/60 mb-1.5">Number of Guests (1&ndash;4)</label>
+              <select id="rsvpGuestCount" onchange="updateRsvpEstimate()" class="editorial-input-dark w-full py-2 text-sm text-ivory bg-emeraldNoir">
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4 Guests</option>
+              </select>
+            </div>
+            <div class="text-right border-b border-ivory/15 pb-2">
+              <span class="block text-[10px] uppercase tracking-[0.22em] text-ivory/50">Total Admission</span>
+              <span id="rsvpTotalAmount" class="font-serif text-2xl text-bronzeLight">$0</span>
+            </div>
+          </div>
+
+          <p id="rsvpErrorMsg" class="hidden text-xs text-rose-300"></p>
+
+          <button type="submit" class="w-full py-4 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] btn-couture shadow-xl">
+            Confirm &amp; Issue Digital VIP Pass
+          </button>
+        </form>
+      </div>
+
+      <!-- Stylized Digital VIP Pass Confirmation -->
+      <div id="rsvpPassView" class="hidden space-y-6 pt-2">
+        <div class="text-center">
+          <p class="text-[10px] uppercase tracking-[0.32em] text-bronze font-semibold">Seat Confirmed</p>
+          <h3 class="font-serif text-3xl font-light text-ivory mt-1">Digital VIP Pass Issued</h3>
+        </div>
+
+        <!-- Couture Digital Pass Ticket Card -->
+        <div class="rounded-3xl bg-gradient-to-br from-noir via-emeraldNoir to-noir border border-bronze/60 p-6 shadow-2xl relative overflow-hidden">
+          <div class="pointer-events-none absolute top-0 right-0 w-36 h-36 bg-bronze/10 rounded-full blur-2xl"></div>
+
+          <div class="flex items-center justify-between border-b border-dashed border-bronze/35 pb-4">
+            <div>
+              <span class="font-serif text-lg tracking-[0.18em] uppercase text-ivory">Aurelia</span>
+              <span class="block text-[9px] uppercase tracking-[0.3em] text-bronze">Official VIP Admission</span>
+            </div>
+            <span id="vipPassGuestBadge" class="px-3 py-1 rounded-full bg-bronze text-noir text-[10px] font-bold uppercase tracking-[0.18em]"></span>
+          </div>
+
+          <div class="py-5 space-y-3">
+            <h4 id="vipPassEventName" class="font-serif text-2xl text-bronzeLight leading-snug"></h4>
+            <p id="vipPassVenueDate" class="text-xs text-ivory/75"></p>
+            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-ivory/10 text-xs">
+              <div>
+                <span class="block text-[9px] uppercase tracking-[0.24em] text-ivory/45">Guest Holder</span>
+                <span id="vipPassHolder" class="font-medium text-ivory mt-0.5 block"></span>
+              </div>
+              <div class="text-right">
+                <span class="block text-[9px] uppercase tracking-[0.24em] text-ivory/45">Confirmation Code</span>
+                <span id="vipPassCode" class="font-mono text-bronzeLight font-semibold mt-0.5 block"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Minimalist Decorative Barcode Strip -->
+          <div class="pt-4 border-t border-dashed border-bronze/35 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-[3px] h-7 opacity-75" aria-hidden="true">
+              <span class="w-[2px] h-full bg-bronze"></span>
+              <span class="w-[1px] h-full bg-ivory/70"></span>
+              <span class="w-[3px] h-full bg-bronze"></span>
+              <span class="w-[1px] h-full bg-ivory/50"></span>
+              <span class="w-[2px] h-full bg-bronze"></span>
+              <span class="w-[4px] h-full bg-ivory/80"></span>
+              <span class="w-[1px] h-full bg-bronze"></span>
+              <span class="w-[2px] h-full bg-ivory/70"></span>
+              <span class="w-[3px] h-full bg-bronze"></span>
+              <span class="w-[1px] h-full bg-ivory/60"></span>
+              <span class="w-[2px] h-full bg-bronze"></span>
+              <span class="w-[3px] h-full bg-ivory/80"></span>
+              <span class="w-[1px] h-full bg-bronze"></span>
+            </div>
+            <button
+              type="button"
+              onclick="copyVipPassCode()"
+              class="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-bronzeLight hover:text-ivory transition-colors"
+            >
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Copy Code</span>
+            </button>
+          </div>
+        </div>
+
+        <p id="vipPassEmailNote" class="text-center text-xs text-ivory/60"></p>
+
+        <button type="button" onclick="closeAllModals()" class="w-full py-3.5 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] hover:bg-bronzeLight transition-colors">
+          Done &amp; Return to Calendar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TOAST NOTIFICATION CONTAINER                                          -->
+  <!-- ===================================================================== -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-[85] flex flex-col gap-3 max-w-sm w-[calc(100%-3rem)] pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- MODULAR APPLICATION JAVASCRIPT                                        -->
+  <!-- ===================================================================== -->
+  <script>
+    /* =======================================================================
+       1. CUSTOMIZABLE DATA ARRAYS
+       Edit these arrays to personalize events, pricing, team, or images.
+    ======================================================================= */
+
+    // 4 Curated High-Res Hero Background Slides
+    const HERO_SLIDES = [
+      {
+        index: '01',
+        label: 'Couture Wedding',
+        caption: 'Château Ballroom & Florals',
+        image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=85',
+        fallback: 'from-[#162922] via-noir to-[#1D1710]'
+      },
+      {
+        index: '02',
+        label: 'Candlelit Gala',
+        caption: 'Symphony Dining Salon',
+        image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1920&q=85',
+        fallback: 'from-[#221A11] via-noir to-emeraldNoir'
+      },
+      {
+        index: '03',
+        label: 'Executive Summit',
+        caption: 'Architectural Keynote Hall',
+        image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1920&q=85',
+        fallback: 'from-[#0E1E24] via-noir to-emeraldNoir'
+      },
+      {
+        index: '04',
+        label: 'Garden Soirée',
+        caption: 'Twilight Estate Reception',
+        image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1920&q=85',
+        fallback: 'from-[#14281D] via-noir to-[#1B1813]'
+      }
+    ];
+
+    // 6 Signature Atelier Services
+    const SERVICES_DATA = [
+      {
+        num: '01',
+        title: 'Couture Weddings',
+        subtitle: 'Multi-Day Destination & Estate Celebrations',
+        description: 'Sculptural floral installations, bespoke table architecture, and unhurried guest hospitality crafted around your story.',
+        tags: ['Scenography', 'Destination Ops', 'VIP Concierge'],
+        image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-emeraldNoir to-[#261E15]'
+      },
+      {
+        num: '02',
+        title: 'Executive Summits',
+        subtitle: 'Leadership Forums & Shareholder Conventions',
+        description: 'Precision-engineered stages, refined spatial branding, and executive lounges designed to elevate corporate prestige.',
+        tags: ['Keynote Production', 'Executive Dining', 'Press Hub'],
+        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-[#112420] to-noir'
+      },
+      {
+        num: '03',
+        title: 'Symphony & Live Galas',
+        subtitle: 'Black-Tie Benefits & Orchestral Evenings',
+        description: 'Theatrical acoustic engineering, luminous candlelit dining, and curated live performances for unforgettable cultural nights.',
+        tags: ['Concert Acoustics', 'Gala Staging', 'Talent Curation'],
+        image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-[#1F1711] to-emeraldNoir'
+      },
+      {
+        num: '04',
+        title: 'Luxury Brand Launches',
+        subtitle: 'Maison Unveils & Editorial Pop-Up Worlds',
+        description: 'Sensory retail theater, kinetic light reveals, and intimate press previews that turn new releases into cultural moments.',
+        tags: ['Spatial Design', 'Editorial Press', 'Reveal Direction'],
+        image: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-[#1A241E] to-[#1D1813]'
+      },
+      {
+        num: '05',
+        title: 'Milestone Soirées',
+        subtitle: 'Private Estate Dinners & Anniversaries',
+        description: 'Intimate Michelin-inspired tastings, rare vintage pairings, and acoustic ensembles tailored for life’s cherished chapters.',
+        tags: ['Private Chefs', 'Sommelier Pairing', 'Floral Styling'],
+        image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-[#241C14] to-noir'
+      },
+      {
+        num: '06',
+        title: 'Global Hybrid Forums',
+        subtitle: 'Broadcast-Grade International Gatherings',
+        description: 'Cinema-quality 4K multi-camera streaming seamlessly uniting live flagship audiences with interactive global salons.',
+        tags: ['4K Broadcast', 'Global Networking', 'Live Analytics'],
+        image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=900&q=80',
+        fallback: 'from-emeraldDeep to-noir'
+      }
+    ];
+
+    // 4 Curated Upcoming Events (Dec 2026 – Mar 2027)
+    const UPCOMING_EVENTS = [
+      {
+        id: 'evt-winter-symphony',
+        title: 'Winter Symphony Candlelight Gala',
+        categories: ['Music & Gala', 'Corporate'],
+        primaryTag: 'Music & Gala',
+        month: 'DEC',
+        day: '18',
+        year: '2026',
+        time: '7:30 PM – 11:45 PM',
+        venue: 'The Glass Conservatory, Manhattan',
+        price: 220,
+        priceLabel: '$220 / Seat',
+        totalSeats: 120,
+        seatsRemaining: 22,
+        image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=960&q=80',
+        fallback: 'from-emeraldNoir via-noir to-[#291E13]'
+      },
+      {
+        id: 'evt-atelier-summit',
+        title: 'Global Design & AI Leaders Forum',
+        categories: ['Corporate', 'Expo & Tech'],
+        primaryTag: 'Expo & Tech',
+        month: 'JAN',
+        day: '22',
+        year: '2027',
+        time: '9:00 AM – 6:00 PM',
+        venue: 'Meridian Architectural Hall, San Francisco',
+        price: 340,
+        priceLabel: '$340 / Pass',
+        totalSeats: 260,
+        seatsRemaining: 58,
+        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=960&q=80',
+        fallback: 'from-[#0E1F21] via-noir to-emeraldDeep'
+      },
+      {
+        id: 'evt-couture-bridal',
+        title: 'Maison Aurelia Bridal & Couture Salon',
+        categories: ['Expo & Tech', 'Music & Gala'],
+        primaryTag: 'Expo & Tech',
+        month: 'FEB',
+        day: '14',
+        year: '2027',
+        time: '11:30 AM – 7:30 PM',
+        venue: 'Villa Rosewood Pavilion, Beverly Hills',
+        price: 95,
+        priceLabel: '$95 / Entry',
+        totalSeats: 140,
+        seatsRemaining: 16,
+        image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=960&q=80',
+        fallback: 'from-[#2A1D16] via-noir to-emeraldNoir'
+      },
+      {
+        id: 'evt-nocturne-fest',
+        title: 'Nocturne Waterfront Symphony & Jazz',
+        categories: ['Music & Gala', 'Corporate'],
+        primaryTag: 'Music & Gala',
+        month: 'MAR',
+        day: '20',
+        year: '2027',
+        time: '6:00 PM – 12:30 AM',
+        venue: 'Bayfront Sculpture Terrace, Miami',
+        price: 160,
+        priceLabel: '$160 / Lounge',
+        totalSeats: 320,
+        seatsRemaining: 84,
+        image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=960&q=80',
+        fallback: 'from-[#132428] via-noir to-[#211810]'
+      }
+    ];
+
+    // Bespoke Collections (Social Soirées vs Corporate Galas)
+    const PACKAGES_DATA = {
+      social: [
+        {
+          name: 'Essential Spark',
+          price: '$5,400',
+          unit: 'curated soirée',
+          guests: 'Up to 100 Guests',
+          tagline: 'Poised coordination and refined styling for intimate estate dinners and celebrations.',
+          featured: false,
+          features: [
+            'Dedicated Senior Event Producer',
+            'Editorial Floral & Candlelight Tablescapes',
+            'Warm Architectural Lighting & Acoustics',
+            'Master Run-of-Show & Vendor Choreography',
+            'Full On-Site Evening Direction (8 Hours)'
+          ]
+        },
+        {
+          name: 'Signature Couture',
+          price: '$14,800',
+          unit: 'full production',
+          guests: 'Up to 320 Guests',
+          tagline: 'Our hallmark atelier direction for iconic weddings, galas, and milestone receptions.',
+          featured: true,
+          features: [
+            'Complete Creative Direction & 3D Spatial Renderings',
+            'Custom Botanical Arches & Sculptural Lighting',
+            'Live String Ensemble or Headliner DJ Curation',
+            'Letterpress & Digital Guest RSVP Concierge',
+            'Bespoke Tasting Menu & Sommelier Pairing',
+            'Editorial Documentary Photo & Film Direction'
+          ]
+        },
+        {
+          name: 'Imperial Bespoke',
+          price: '$32,000+',
+          unit: 'multi-day destination',
+          guests: '300 – 1,500+ Guests',
+          tagline: 'Unrivaled luxury for châteaux takeovers, royal weddings, and private destination weekends.',
+          featured: false,
+          features: [
+            'Multi-Day Destination Itinerary & Venue Buyout',
+            'International Celebrity Artist & Orchestra Booking',
+            'Michelin-Starred Culinary & Mixology Atelier',
+            'Private Aviation, Yacht & Chauffeur Logistics',
+            '15-Member Production, Styling & Security Crew',
+            '24/7 White-Glove Family & Patron Concierge'
+          ]
+        }
+      ],
+      corporate: [
+        {
+          name: 'Essential Spark',
+          price: '$7,200',
+          unit: 'executive forum',
+          guests: 'Up to 150 Delegates',
+          tagline: 'Turnkey precision for leadership retreats, board summits, and private investor briefings.',
+          featured: false,
+          features: [
+            'Architectural Venue Sourcing & Spatial Flow',
+            'Seamless QR Check-In & Hospitality Desk',
+            'Broadcast-Grade Keynote Stage & LED Screens',
+            'Artisanal Barista & Executive Culinary Breaks',
+            'Dedicated Technical Director & Stage Crew'
+          ]
+        },
+        {
+          name: 'Signature Couture',
+          price: '$21,500',
+          unit: 'flagship gala / summit',
+          guests: 'Up to 650 Delegates',
+          tagline: 'High-fashion brand theater crafted for global launches, awards galas, and annual summits.',
+          featured: true,
+          features: [
+            'Custom Branded Scenic Architecture & 4K Wall',
+            'Multi-Camera Hybrid Broadcast & Global Stream',
+            'VIP Speaker Salon & Press Interview Suite',
+            'Interactive Brand Installations & Networking App',
+            'Three-Course Black-Tie Gala Dining Production',
+            'Post-Event Impact Analytics & Highlight Film'
+          ]
+        },
+        {
+          name: 'Imperial Bespoke',
+          price: '$48,000+',
+          unit: 'enterprise takeover',
+          guests: '650 – 5,000+ Delegates',
+          tagline: 'Landmark international conventions, multi-track expos, and full-city brand takeovers.',
+          featured: false,
+          features: [
+            'Full Convention Architecture & Wayfinding System',
+            'Multi-Track Keynote & Breakout Technical Ops',
+            'Global Satellite Feed & Live AI Interpretation',
+            'C-Suite Private Rooftop Dinners & After-Parties',
+            'Comprehensive Risk, Permits & Diplomatic Security',
+            'Dedicated Executive Producer & 25+ On-Site Crew'
+          ]
+        }
+      ]
+    };
+
+    // Voices of Distinction — Testimonials
+    const TESTIMONIALS_DATA = [
+      {
+        name: 'Camille & Julian Sterling',
+        role: 'Private Estate Patrons',
+        eventType: 'Couture Wedding Weekend',
+        rating: 5,
+        initials: 'CS',
+        quote: 'Aurelia transformed our Lake Como villa into an intimate candlelit sanctuary. Every floral note, musical transition, and culinary course unfolded with quiet perfection—it felt like stepping inside a living editorial.'
+      },
+      {
+        name: 'Meera Deshmukh',
+        role: 'Chief Brand Officer, Maison Solis',
+        eventType: 'Luxury Brand Launch',
+        rating: 5,
+        initials: 'MD',
+        quote: 'Rarely does an agency balance architectural restraint with genuine theatrical wonder. Our flagship fragrance reveal captivated 300 editors and set a new benchmark for our global launches.'
+      },
+      {
+        name: 'Henrik Lindqvist',
+        role: 'Managing Partner, Nordica Capital',
+        eventType: 'Executive Annual Summit',
+        rating: 5,
+        initials: 'HL',
+        quote: 'From private airport transfers to flawless multi-continent livestreaming, Marcus and the Aurelia team orchestrated our 600-delegate summit with effortless calm and Swiss-watch precision.'
+      },
+      {
+        name: 'Aurelie Laurent',
+        role: 'Director, Beaux-Arts Philanthropy',
+        eventType: 'Winter Symphony Gala',
+        rating: 5,
+        initials: 'AL',
+        quote: 'The atmosphere they sculpted inside the conservatory moved our patrons to tears. Not only was it the most luminous gala in our history, it raised 70% above our annual endowment target.'
+      }
+    ];
+
+    // The Visionaries — 4 Leadership Profiles
+    const TEAM_DATA = [
+      {
+        name: 'Elena Vance',
+        role: 'Founder & Creative Director',
+        specialty: 'Architectural Scenography',
+        bio: 'Former Milan interior architect shaping poetic weddings and couture installations defined by light, proportion, and floral minimalism.',
+        initials: 'EV',
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=640&q=80',
+        email: 'elena@aureliaevents.com'
+      },
+      {
+        name: 'Marcus Thorne',
+        role: 'Head of Production',
+        specialty: 'Stagecraft & Live Broadcast',
+        bio: 'Directs symphonic acoustics, kinetic lighting grids, and zero-latency international summits with meticulous technical mastery.',
+        initials: 'MT',
+        image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=640&q=80',
+        email: 'marcus@aureliaevents.com'
+      },
+      {
+        name: 'Ananya Kapoor',
+        role: 'Lead Experience Designer',
+        specialty: 'Sensory Guest Journeys',
+        bio: 'Curates multi-sensory hospitality, spatial storytelling, and bespoke brand worlds across New York, Paris, and Mumbai.',
+        initials: 'AK',
+        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=640&q=80',
+        email: 'ananya@aureliaevents.com'
+      },
+      {
+        name: 'Julian Brooks',
+        role: 'Director of Client Relations',
+        specialty: 'Private Patron Concierge',
+        bio: 'Oversees white-glove partnerships, transparent budgeting, and discreet destination logistics from initial sketch to final toast.',
+        initials: 'JB',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=640&q=80',
+        email: 'julian@aureliaevents.com'
+      }
+    ];
+
+    /* =======================================================================
+       2. APPLICATION STATE
+    ======================================================================= */
+    let activeHeroIndex = 0;
+    let heroTimerId = null;
+    let activeEventCategory = 'All';
+    let currentPackageMode = 'social';
+    let activeTestimonialIndex = 0;
+    let testimonialAutoPlay = true;
+    let testimonialTimerId = null;
+    let activeRsvpEventId = null;
+    let latestVipPassCode = '';
+
+    /* =======================================================================
+       3. HERO PHOTOGRAPHY SLIDESHOW (6s CROSSFADE + KEN BURNS + PROGRESS)
+    ======================================================================= */
+    function renderHeroSlides() {
+      const container = document.getElementById('heroSlidesContainer');
+      const switcher = document.getElementById('heroSceneSwitcher');
+      if (!container || !switcher) return;
+
+      container.innerHTML = HERO_SLIDES.map((slide, idx) => `
+        <div
+          data-hero-slide="${idx}"
+          class="absolute inset-0 transition-opacity duration-[1400ms] ease-in-out bg-gradient-to-br ${slide.fallback} ${
+            idx === activeHeroIndex ? 'opacity-100 z-[1]' : 'opacity-0 z-0'
+          }"
+        >
+          <img
+            src="${slide.image}"
+            alt="${slide.label} — ${slide.caption}"
+            loading="${idx === 0 ? 'eager' : 'lazy'}"
+            onerror="this.style.display='none';"
+            class="w-full h-full object-cover object-center ${idx === activeHeroIndex ? 'animate-ken-burns' : ''}"
+          />
+        </div>
+      `).join('');
+
+      switcher.innerHTML = HERO_SLIDES.map((slide, idx) => `
+        <button
+          type="button"
+          role="tab"
+          aria-selected="${idx === activeHeroIndex}"
+          onclick="goToHeroSlide(${idx}, true)"
+          data-hero-tab="${idx}"
+          class="group text-left px-3 py-2 rounded-xl transition-all duration-300 ${
+            idx === activeHeroIndex ? 'bg-noir/55 backdrop-blur-md' : 'bg-transparent hover:bg-noir/35'
+          }"
+        >
+          <div class="flex items-center justify-between gap-2 text-[10px] uppercase tracking-[0.22em]">
+            <span class="${idx === activeHeroIndex ? 'text-bronzeLight font-semibold' : 'text-ivory/60 group-hover:text-ivory'}">${slide.label}</span>
+            <span class="font-mono ${idx === activeHeroIndex ? 'text-bronze' : 'text-ivory/35'}">${slide.index}</span>
+          </div>
+          <!-- Animated 6-Second Hairline Progress Track -->
+          <div class="mt-2 h-[2px] w-full bg-ivory/15 rounded-full overflow-hidden">
+            <div data-hero-progress="${idx}" class="h-full bg-bronze ${idx === activeHeroIndex ? 'animate-slide-progress' : 'w-0'}"></div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function goToHeroSlide(index, manual = false) {
+      activeHeroIndex = index % HERO_SLIDES.length;
+
+      document.querySelectorAll('[data-hero-slide]').forEach((el, idx) => {
+        const img = el.querySelector('img');
+        const isCurrent = idx === activeHeroIndex;
+        el.classList.toggle('opacity-100', isCurrent);
+        el.classList.toggle('z-[1]', isCurrent);
+        el.classList.toggle('opacity-0', !isCurrent);
+        el.classList.toggle('z-0', !isCurrent);
+
+        if (img && isCurrent) {
+          img.classList.remove('animate-ken-burns');
+          void img.offsetWidth;
+          img.classList.add('animate-ken-burns');
+        }
+      });
+
+      document.querySelectorAll('[data-hero-tab]').forEach((tab, idx) => {
+        const isCurrent = idx === activeHeroIndex;
+        tab.setAttribute('aria-selected', String(isCurrent));
+        tab.className = `group text-left px-3 py-2 rounded-xl transition-all duration-300 ${
+          isCurrent ? 'bg-noir/55 backdrop-blur-md' : 'bg-transparent hover:bg-noir/35'
+        }`;
+        const labelSpan = tab.querySelector('span:first-child');
+        const numSpan = tab.querySelector('span:last-child');
+        if (labelSpan) labelSpan.className = isCurrent ? 'text-bronzeLight font-semibold' : 'text-ivory/60 group-hover:text-ivory';
+        if (numSpan) numSpan.className = `font-mono ${isCurrent ? 'text-bronze' : 'text-ivory/35'}`;
+
+        const bar = tab.querySelector('[data-hero-progress]');
+        if (bar) {
+          bar.classList.remove('animate-slide-progress');
+          bar.style.width = '0%';
+          if (isCurrent) {
+            void bar.offsetWidth;
+            bar.classList.add('animate-slide-progress');
+          }
+        }
+      });
+
+      if (manual) startHeroSlideshow();
+    }
+
+    function startHeroSlideshow() {
+      if (heroTimerId) clearInterval(heroTimerId);
+      heroTimerId = setInterval(() => {
+        goToHeroSlide((activeHeroIndex + 1) % HERO_SLIDES.length, false);
+      }, 6000);
+    }
+
+    /* =======================================================================
+       4. RENDER SERVICES, EVENTS, PACKAGES, TESTIMONIALS & TEAM
+    ======================================================================= */
+
+    // Render 6 Editorial Photo-Backed Service Cards
+    function renderServices() {
+      const grid = document.getElementById('servicesGrid');
+      if (!grid) return;
+
+      grid.innerHTML = SERVICES_DATA.map((service) => `
+        <article class="group bg-ivory rounded-3xl overflow-hidden border border-espresso/12 hover:border-bronze/70 shadow-sm hover:shadow-2xl hover:shadow-espresso/10 transition-all duration-500 flex flex-col justify-between">
+          <div>
+            <!-- Editorial Photo Header with Numbered Index -->
+            <div class="relative h-56 overflow-hidden bg-gradient-to-br ${service.fallback}">
+              <img
+                src="${service.image}"
+                alt="${service.title}"
+                loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div class="hidden absolute inset-0 flex flex-col items-center justify-center text-bronzeLight/80 bg-gradient-to-br ${service.fallback}">
+                <span class="font-serif italic text-3xl">${service.num}</span>
+                <span class="text-[10px] uppercase tracking-[0.28em] mt-1">Aurelia Atelier</span>
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/15 to-transparent"></div>
+              <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-noir/75 backdrop-blur-md border border-bronze/40 text-[10px] font-mono tracking-[0.2em] text-bronzeLight">
+                ${service.num}
+              </span>
+            </div>
+
+            <!-- Card Editorial Content -->
+            <div class="p-7 sm:p-8">
+              <p class="text-[10px] uppercase tracking-[0.22em] text-bronzeMuted font-semibold">${service.subtitle}</p>
+              <h3 class="font-serif text-3xl font-normal text-espresso mt-2 group-hover:text-bronzeMuted transition-colors">
+                ${service.title}
+              </h3>
+              <p class="mt-3 text-sm text-stoneWarm font-light leading-relaxed">
+                ${service.description}
+              </p>
+
+              <!-- Key Highlight Tags -->
+              <div class="mt-5 flex flex-wrap gap-2">
+                ${service.tags.map((tag) => `
+                  <span class="px-3 py-1 rounded-full bg-linen border border-espresso/10 text-[10px] uppercase tracking-[0.16em] text-stoneWarm font-medium">
+                    ${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Request Proposal Footer -->
+          <div class="px-7 sm:px-8 pb-7 pt-4 border-t border-espresso/10">
+            <button
+              type="button"
+              onclick="openBookingModal('${service.title.replace(/'/g, "\\'")}')"
+              class="w-full inline-flex items-center justify-between text-[11px] uppercase tracking-[0.22em] font-semibold text-espresso group-hover:text-bronzeMuted transition-colors py-1"
+            >
+              <span>Request Proposal</span>
+              <span class="w-9 h-9 rounded-full border border-espresso/20 flex items-center justify-center group-hover:bg-noir group-hover:text-bronzeLight group-hover:border-noir transition-all">
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </span>
+            </button>
+          </div>
+        </article>
+      `).join('');
+
+      refreshIcons();
+    }
+
+    // Render Magazine-Style Upcoming Events
+    function renderEvents() {
+      const grid = document.getElementById('eventsGrid');
+      if (!grid) return;
+
+      const list = activeEventCategory === 'All'
+        ? UPCOMING_EVENTS
+        : UPCOMING_EVENTS.filter((evt) => evt.categories.includes(activeEventCategory));
+
+      grid.innerHTML = list.map((evt) => {
+        const pct = Math.max(0, Math.round((evt.seatsRemaining / evt.totalSeats) * 100));
+        const soldOut = evt.seatsRemaining <= 0;
+
+        return `
+          <article class="group bg-ivory rounded-[1.75rem] overflow-hidden border border-espresso/12 hover:border-bronze/70 shadow-sm hover:shadow-2xl hover:shadow-espresso/10 transition-all duration-500 flex flex-col animate-fade-up">
+            <!-- Event Photography & Floating Date Badge -->
+            <div class="relative h-60 sm:h-64 overflow-hidden bg-gradient-to-br ${evt.fallback}">
+              <img
+                src="${evt.image}"
+                alt="${evt.title}"
+                loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${evt.fallback} text-bronzeLight">
+                <i data-lucide="sparkles" class="w-8 h-8 mb-2"></i>
+                <span class="text-[10px] uppercase tracking-[0.28em]">Curated Salon</span>
+              </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-noir/80 via-noir/20 to-transparent"></div>
+
+              <!-- Architectural Floating Date Badge -->
+              <div class="absolute top-5 left-5 px-4 py-2.5 rounded-2xl bg-ivory/95 backdrop-blur-md text-center shadow-lg border border-bronze/30">
+                <span class="block text-[9px] uppercase tracking-[0.26em] text-bronzeMuted font-bold">${evt.month}</span>
+                <span class="block font-serif text-3xl font-medium text-espresso leading-none my-0.5">${evt.day}</span>
+                <span class="block text-[9px] text-stoneWarm">${evt.year}</span>
+              </div>
+
+              <!-- Category & Price Pills -->
+              <div class="absolute top-5 right-5 flex flex-col items-end gap-2">
+                <span class="px-3.5 py-1 rounded-full bg-noir/80 backdrop-blur-md border border-bronze/40 text-[10px] uppercase tracking-[0.2em] text-bronzeLight font-semibold">
+                  ${evt.primaryTag}
+                </span>
+                <span class="px-3.5 py-1 rounded-full bg-ivory/95 text-espresso text-xs font-semibold shadow">
+                  ${evt.priceLabel}
+                </span>
+              </div>
+            </div>
+
+            <!-- Event Details -->
+            <div class="p-7 sm:p-8 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-serif text-3xl font-normal text-espresso group-hover:text-bronzeMuted transition-colors leading-snug">
+                  ${evt.title}
+                </h3>
+
+                <div class="mt-4 space-y-2 text-sm text-stoneWarm font-light">
+                  <div class="flex items-center gap-2.5">
+                    <i data-lucide="clock" class="w-4 h-4 text-bronzeMuted shrink-0"></i>
+                    <span>${evt.time}</span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-bronzeMuted shrink-0"></i>
+                    <span>${evt.venue}</span>
+                  </div>
+                </div>
+
+                <!-- Seat Availability Progress Bar -->
+                <div class="mt-6 pt-5 border-t border-espresso/10">
+                  <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="text-[10px] uppercase tracking-[0.22em] text-stoneWarm font-semibold">Seat Availability</span>
+                    <span class="font-medium ${evt.seatsRemaining <= 20 ? 'text-bronzeMuted' : 'text-espresso'}">
+                      ${soldOut ? 'Sold Out' : `${evt.seatsRemaining} / ${evt.totalSeats} seats remaining`}
+                    </span>
+                  </div>
+                  <div class="h-1.5 w-full rounded-full bg-linen overflow-hidden">
+                    <div class="h-full rounded-full bg-gradient-to-r from-bronzeMuted to-bronze transition-all duration-500" style="width: ${pct}%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reserve Seat Action -->
+              <div class="mt-7 flex items-center justify-between gap-4">
+                <span class="text-[11px] uppercase tracking-[0.18em] text-stoneWarm">
+                  ${soldOut ? 'Waitlist Closed' : 'Instant VIP E-Pass'}
+                </span>
+                <button
+                  type="button"
+                  onclick="openRsvpModal('${evt.id}')"
+                  ${soldOut ? 'disabled' : ''}
+                  class="inline-flex items-center gap-2.5 px-7 py-3 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold transition-all ${
+                    soldOut
+                      ? 'bg-linen text-stoneWarm/60 cursor-not-allowed'
+                      : 'bg-noir text-ivory btn-couture-dark hover:text-noir shadow-md'
+                  }"
+                >
+                  <span>${soldOut ? 'Sold Out' : 'Reserve Seat'}</span>
+                  <i data-lucide="${soldOut ? 'lock' : 'ticket'}" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      refreshIcons();
+    }
+
+    // Render 3 Bespoke Collections (with Center Signature Couture in Emerald-Noir)
+    function renderPackages() {
+      const grid = document.getElementById('packagesGrid');
+      if (!grid) return;
+
+      const tiers = PACKAGES_DATA[currentPackageMode];
+      const modeName = currentPackageMode === 'social' ? 'Social Soirées' : 'Corporate Galas';
+
+      const checkSvg = (isDark) => `
+        <svg class="w-4 h-4 shrink-0 mt-0.5 ${isDark ? 'text-bronze' : 'text-bronzeMuted'}" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.2"/>
+          <path d="M6.5 10.2L8.9 12.6L13.8 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+
+      grid.innerHTML = tiers.map((pkg) => {
+        if (pkg.featured) {
+          return `
+            <article class="relative rounded-[2rem] bg-emeraldNoir text-ivory p-8 sm:p-10 border border-bronze/60 shadow-2xl shadow-noir/25 lg:-translate-y-4 flex flex-col justify-between overflow-hidden animate-fade-up">
+              <div class="pointer-events-none absolute inset-0 film-grain opacity-50"></div>
+              <div class="relative z-10">
+                <div class="flex items-center justify-between gap-2 mb-5">
+                  <span class="px-3.5 py-1 rounded-full bg-bronze text-noir text-[10px] uppercase tracking-[0.22em] font-bold">Most Requested</span>
+                  <span class="text-[10px] uppercase tracking-[0.2em] text-ivory/60">${pkg.guests}</span>
+                </div>
+
+                <h3 class="font-serif text-3xl sm:text-4xl font-light text-ivory">${pkg.name}</h3>
+                <p class="mt-2.5 text-sm text-ivory/70 font-light leading-relaxed">${pkg.tagline}</p>
+
+                <div class="mt-7 pb-7 border-b border-ivory/15">
+                  <span class="font-serif text-5xl font-light text-bronzeLight">${pkg.price}</span>
+                  <span class="text-xs uppercase tracking-[0.18em] text-ivory/50 ml-2">/ ${pkg.unit}</span>
+                </div>
+
+                <ul class="mt-7 space-y-4">
+                  ${pkg.features.map((f) => `
+                    <li class="flex items-start gap-3 text-sm text-ivory/85 font-light">
+                      ${checkSvg(true)}
+                      <span>${f}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+
+              <div class="relative z-10 mt-9 pt-4">
+                <button
+                  type="button"
+                  onclick="selectCollection('${pkg.name}', '${modeName}')"
+                  class="w-full py-4 rounded-full bg-bronze text-noir font-semibold text-xs uppercase tracking-[0.22em] btn-couture shadow-xl"
+                >
+                  Select Collection
+                </button>
+              </div>
+            </article>
+          `;
+        }
+
+        return `
+          <article class="rounded-[2rem] bg-linen/70 text-espresso p-8 sm:p-10 border border-espresso/12 hover:border-bronze/60 hover:bg-ivory transition-all duration-400 flex flex-col justify-between animate-fade-up">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-5">
+                <span class="text-[10px] uppercase tracking-[0.24em] text-bronzeMuted font-semibold">Atelier Tier</span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-stoneWarm">${pkg.guests}</span>
+              </div>
+
+              <h3 class="font-serif text-3xl sm:text-4xl font-light text-espresso">${pkg.name}</h3>
+              <p class="mt-2.5 text-sm text-stoneWarm font-light leading-relaxed">${pkg.tagline}</p>
+
+              <div class="mt-7 pb-7 border-b border-espresso/12">
+                <span class="font-serif text-5xl font-light text-espresso">${pkg.price}</span>
+                <span class="text-xs uppercase tracking-[0.18em] text-stoneWarm ml-2">/ ${pkg.unit}</span>
+              </div>
+
+              <ul class="mt-7 space-y-4">
+                ${pkg.features.map((f) => `
+                  <li class="flex items-start gap-3 text-sm text-espresso/85 font-light">
+                    ${checkSvg(false)}
+                    <span>${f}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <div class="mt-9 pt-4">
+              <button
+                type="button"
+                onclick="selectCollection('${pkg.name}', '${modeName}')"
+                class="w-full py-4 rounded-full border border-espresso/25 text-espresso font-semibold text-xs uppercase tracking-[0.22em] hover:bg-noir hover:text-ivory hover:border-noir transition-all"
+              >
+                Select Collection
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // Render Testimonials Showcase
+    function renderTestimonials() {
+      const stage = document.getElementById('testimonialStage');
+      const indicators = document.getElementById('testimonialIndicators');
+      if (!stage || !indicators) return;
+
+      const item = TESTIMONIALS_DATA[activeTestimonialIndex];
+      const stars = Array(item.rating).fill('<i data-lucide="star" class="w-4 h-4 fill-bronze text-bronze"></i>').join('');
+
+      stage.innerHTML = `
+        <div class="animate-fade-up space-y-8">
+          <div class="flex flex-wrap items-center gap-4">
+            <div class="flex items-center gap-1">${stars}</div>
+            <span class="h-px w-8 bg-bronze/40"></span>
+            <span class="text-[10px] uppercase tracking-[0.28em] text-bronzeLight font-semibold">${item.eventType}</span>
+          </div>
+
+          <blockquote class="font-serif text-2xl sm:text-3xl lg:text-4xl font-light italic text-ivory leading-[1.35] max-w-4xl">
+            &ldquo;${item.quote}&rdquo;
+          </blockquote>
+
+          <div class="flex items-center gap-4 pt-2">
+            <div class="w-13 h-13 w-12 h-12 rounded-full border border-bronze/60 bg-emeraldNoir flex items-center justify-center font-serif text-lg italic text-bronzeLight">
+              ${item.initials}
+            </div>
+            <div>
+              <p class="font-serif text-xl text-ivory tracking-wide">${item.name}</p>
+              <p class="text-xs uppercase tracking-[0.18em] text-ivory/55 mt-0.5">${item.role}</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      indicators.innerHTML = TESTIMONIALS_DATA.map((t, idx) => `
+        <button
+          type="button"
+          onclick="goToTestimonial(${idx})"
+          aria-label="View reflection from ${t.name}"
+          class="flex-1 group py-2 text-left"
+        >
+          <div class="h-[2px] w-full rounded-full overflow-hidden bg-ivory/15">
+            <div class="h-full transition-all duration-500 ${idx === activeTestimonialIndex ? 'w-full bg-bronze' : 'w-0 group-hover:w-1/3 bg-ivory/40'}"></div>
+          </div>
+          <span class="hidden sm:block mt-2 text-[10px] uppercase tracking-[0.2em] truncate ${
+            idx === activeTestimonialIndex ? 'text-bronzeLight font-semibold' : 'text-ivory/40 group-hover:text-ivory/70'
+          }">${t.name}</span>
+        </button>
+      `).join('');
+
+      refreshIcons();
+    }
+
+    // Render 4 Visionaries Team Portrait Cards (Grayscale -> Full-Color Hover)
+    function renderTeam() {
+      const grid = document.getElementById('teamGrid');
+      if (!grid) return;
+
+      grid.innerHTML = TEAM_DATA.map((member) => `
+        <article class="group bg-ivory rounded-[1.75rem] overflow-hidden border border-espresso/12 hover:border-bronze/70 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+          <!-- Architectural Portrait with Grayscale-to-Color Transition & Monogram Fallback -->
+          <div class="relative h-72 overflow-hidden bg-gradient-to-br from-emeraldNoir to-noir">
+            <img
+              src="${member.image}"
+              alt="${member.name} — ${member.role}"
+              loading="lazy"
+              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+              class="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
+            />
+            <!-- Stylish Monogram Fallback -->
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-emeraldNoir to-noir">
+              <div class="w-20 h-20 rounded-full border border-bronze/60 flex items-center justify-center font-serif italic text-3xl text-bronzeLight">
+                ${member.initials}
+              </div>
+              <span class="mt-3 text-[10px] uppercase tracking-[0.26em] text-ivory/60">${member.role}</span>
+            </div>
+
+            <!-- Subtle Hover Social Overlay -->
+            <div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="showToast('Opening ${member.name}\'s LinkedIn dossier', 'info')" aria-label="${member.name} LinkedIn" class="w-9 h-9 rounded-full bg-noir/85 backdrop-blur-md border border-ivory/20 text-ivory hover:border-bronze hover:text-bronzeLight flex items-center justify-center transition-colors">
+                  <i data-lucide="linkedin" class="w-3.5 h-3.5"></i>
+                </button>
+                <button type="button" onclick="showToast('Opening ${member.name}\'s editorial portfolio', 'info')" aria-label="${member.name} Instagram" class="w-9 h-9 rounded-full bg-noir/85 backdrop-blur-md border border-ivory/20 text-ivory hover:border-bronze hover:text-bronzeLight flex items-center justify-center transition-colors">
+                  <i data-lucide="instagram" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <button
+                type="button"
+                onclick="copyTextToClipboard('${member.email}', 'Copied ${member.name}\'s email.')"
+                class="px-3.5 py-2 rounded-full bg-bronze text-noir text-[10px] uppercase tracking-[0.18em] font-semibold hover:bg-bronzeLight transition-colors"
+              >
+                Email
+              </button>
+            </div>
+          </div>
+
+          <!-- Profile Info -->
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.24em] text-bronzeMuted font-semibold">${member.role}</p>
+              <h3 class="font-serif text-2xl font-normal text-espresso mt-1.5">${member.name}</h3>
+              <p class="text-xs italic font-serif text-stoneWarm mt-0.5">${member.specialty}</p>
+              <p class="mt-3 text-xs sm:text-sm text-stoneWarm font-light leading-relaxed">${member.bio}</p>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      refreshIcons();
+    }
+
+    /* =======================================================================
+       5. INTERACTIVE CONTROLS (FILTERS, SEGMENTED TOGGLE, CAROUSEL, SCROLL)
+    ======================================================================= */
+
+    // Category Filter Tabs
+    function setupEventFilters() {
+      const buttons = document.querySelectorAll('.event-filter-btn');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeEventCategory = btn.dataset.category;
+          buttons.forEach((b) => {
+            const active = b.dataset.category === activeEventCategory;
+            b.className = active
+              ? 'event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold transition-all bg-noir text-ivory shadow-md'
+              : 'event-filter-btn px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium transition-all bg-ivory text-stoneWarm border border-espresso/15 hover:border-bronzeMuted hover:text-espresso';
+          });
+          renderEvents();
+        });
+      });
+    }
+
+    // Animated Segmented Toggle for Bespoke Collections
+    function setPackageMode(mode) {
+      currentPackageMode = mode;
+      const indicator = document.getElementById('packageToggleIndicator');
+      const socialBtn = document.getElementById('toggleSocialBtn');
+      const corpBtn = document.getElementById('toggleCorporateBtn');
+
+      if (mode === 'social') {
+        indicator.style.transform = 'translateX(0%)';
+        socialBtn.classList.add('text-ivory');
+        socialBtn.classList.remove('text-stoneWarm');
+        corpBtn.classList.add('text-stoneWarm');
+        corpBtn.classList.remove('text-ivory');
+      } else {
+        indicator.style.transform = 'translateX(100%)';
+        corpBtn.classList.add('text-ivory');
+        corpBtn.classList.remove('text-stoneWarm');
+        socialBtn.classList.add('text-stoneWarm');
+        socialBtn.classList.remove('text-ivory');
+      }
+      renderPackages();
+    }
+
+    // Testimonial Carousel Controls
+    function nextTestimonial() {
+      activeTestimonialIndex = (activeTestimonialIndex + 1) % TESTIMONIALS_DATA.length;
+      renderTestimonials();
+    }
+
+    function prevTestimonial() {
+      activeTestimonialIndex = (activeTestimonialIndex - 1 + TESTIMONIALS_DATA.length) % TESTIMONIALS_DATA.length;
+      renderTestimonials();
+    }
+
+    function goToTestimonial(idx) {
+      activeTestimonialIndex = idx;
+      renderTestimonials();
+      if (testimonialAutoPlay) startTestimonialAutoplay();
+    }
+
+    function startTestimonialAutoplay() {
+      if (testimonialTimerId) clearInterval(testimonialTimerId);
+      if (testimonialAutoPlay) {
+        testimonialTimerId = setInterval(nextTestimonial, 6500);
+      }
+    }
+
+    function toggleTestimonialAutoplay() {
+      testimonialAutoPlay = !testimonialAutoPlay;
+      const label = document.getElementById('autoPlayLabel');
+      const icon = document.getElementById('autoPlayIcon');
+      if (testimonialAutoPlay) {
+        label.textContent = 'Auto-Play';
+        icon.setAttribute('data-lucide', 'pause');
+        startTestimonialAutoplay();
+      } else {
+        label.textContent = 'Paused';
+        icon.setAttribute('data-lucide', 'play');
+        if (testimonialTimerId) clearInterval(testimonialTimerId);
+      }
+      refreshIcons();
+    }
+
+    // Scroll Progress Hairline, Floating Pill Navbar Morph & Active Section Spy
+    function setupScrollChoreography() {
+      const progressBar = document.getElementById('scrollProgressBar');
+      const navShell = document.getElementById('navShell');
+      const navLinks = document.querySelectorAll('.nav-anchor');
+      const sections = ['services', 'events', 'packages', 'testimonials', 'team', 'contact']
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+
+      const handleScroll = () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+        if (progressBar) progressBar.style.width = `${progress}%`;
+
+        // Transition transparent header into sleek floating frosted obsidian/emerald pill
+        if (navShell) {
+          if (scrollTop > 60) {
+            navShell.classList.add('bg-noir/85', 'backdrop-blur-xl', 'border-bronze/25', 'shadow-2xl', 'shadow-noir/40', 'max-w-6xl');
+            navShell.classList.remove('bg-transparent', 'border-transparent', 'max-w-7xl');
+          } else {
+            navShell.classList.remove('bg-noir/85', 'backdrop-blur-xl', 'border-bronze/25', 'shadow-2xl', 'shadow-noir/40', 'max-w-6xl');
+            navShell.classList.add('bg-transparent', 'border-transparent', 'max-w-7xl');
+          }
+        }
+
+        // Active section highlight
+        let currentId = '';
+        sections.forEach((sec) => {
+          const top = sec.offsetTop - 160;
+          if (scrollTop >= top) currentId = sec.id;
+        });
+
+        navLinks.forEach((link) => {
+          const isMatch = link.dataset.navLink === currentId;
+          link.classList.toggle('text-bronzeLight', isMatch);
+          link.classList.toggle('border-bronze', isMatch);
+          link.classList.toggle('text-ivory/80', !isMatch);
+          link.classList.toggle('border-transparent', !isMatch);
+        });
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+    }
+
+    // IntersectionObserver Staggered Scroll Reveals & Hero Count-Up Metrics
+    function setupObservers() {
+      if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+      } else {
+        document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+      }
+
+      // Hero Stats Count-Up
+      const counters = document.querySelectorAll('.stat-counter');
+      let animated = false;
+      const runCounters = () => {
+        if (animated) return;
+        animated = true;
+        counters.forEach((counter) => {
+          const target = parseInt(counter.dataset.target, 10);
+          const suffix = counter.dataset.suffix || '';
+          const duration = 1700;
+          const start = performance.now();
+          const step = (now) => {
+            const p = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - p, 4);
+            counter.textContent = `${Math.floor(eased * target)}${suffix}`;
+            if (p < 1) requestAnimationFrame(step);
+            else counter.textContent = `${target}${suffix}`;
+          };
+          requestAnimationFrame(step);
+        });
+      };
+
+      const statsBar = document.getElementById('heroStatsBar');
+      if ('IntersectionObserver' in window && statsBar) {
+        const obs = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            runCounters();
+            obs.disconnect();
+          }
+        }, { threshold: 0.25 });
+        obs.observe(statsBar);
+      } else {
+        runCounters();
+      }
+    }
+
+    /* =======================================================================
+       6. MODALS (CONSULTATION BOOKING & EVENT RSVP + DIGITAL VIP PASS)
+    ======================================================================= */
+    function openBookingModal(serviceName = '', packageName = '', customNote = '') {
+      const modal = document.getElementById('bookingModal');
+      document.getElementById('bookingFormView').classList.remove('hidden');
+      document.getElementById('bookingSuccessView').classList.add('hidden');
+      document.getElementById('bookingErrorMsg').classList.add('hidden');
+      document.getElementById('bookingForm').reset();
+
+      if (serviceName) document.getElementById('bookService').value = serviceName;
+      if (packageName) document.getElementById('bookPackage').value = packageName;
+
+      const pill = document.getElementById('bookingContextPill');
+      const pillText = document.getElementById('bookingContextText');
+      if (customNote || serviceName || packageName) {
+        pill.classList.remove('hidden');
+        pillText.textContent = customNote || `Selected: ${serviceName || packageName}`;
+      } else {
+        pill.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      refreshIcons();
+    }
+
+    function selectCollection(packageName, modeName) {
+      const defaultDiscipline = modeName === 'Corporate Galas' ? 'Executive Summits' : 'Couture Weddings';
+      openBookingModal(defaultDiscipline, packageName, `Collection Pre-Selected: ${packageName} (${modeName})`);
+    }
+
+    function openRsvpModal(eventId) {
+      const evt = UPCOMING_EVENTS.find((e) => e.id === eventId);
+      if (!evt || evt.seatsRemaining <= 0) {
+        showToast('This curated event is currently at full capacity.', 'error');
+        return;
+      }
+
+      activeRsvpEventId = eventId;
+      const modal = document.getElementById('rsvpModal');
+      document.getElementById('rsvpFormView').classList.remove('hidden');
+      document.getElementById('rsvpPassView').classList.add('hidden');
+      document.getElementById('rsvpErrorMsg').classList.add('hidden');
+      document.getElementById('rsvpForm').reset();
+
+      document.getElementById('rsvpEventTitle').textContent = evt.title;
+      document.getElementById('rsvpEventMeta').textContent = `${evt.month} ${evt.day}, ${evt.year} • ${evt.time} • ${evt.venue}`;
+      document.getElementById('rsvpEventPriceLabel').textContent = evt.priceLabel;
+      document.getElementById('rsvpRemainingBadge').textContent = `${evt.seatsRemaining} seats open`;
+
+      // Populate guest selector (1–4, capped by remaining seats)
+      const select = document.getElementById('rsvpGuestCount');
+      const maxGuests = Math.min(4, evt.seatsRemaining);
+      select.innerHTML = '';
+      for (let i = 1; i <= maxGuests; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i === 1 ? '1 Guest' : `${i} Guests`;
+        select.appendChild(opt);
+      }
+
+      updateRsvpEstimate();
+      modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      refreshIcons();
+    }
+
+    function updateRsvpEstimate() {
+      const evt = UPCOMING_EVENTS.find((e) => e.id === activeRsvpEventId);
+      if (!evt) return;
+      const qty = parseInt(document.getElementById('rsvpGuestCount').value, 10) || 1;
+      document.getElementById('rsvpTotalAmount').textContent = `$${(qty * evt.price).toLocaleString()}`;
+    }
+
+    function copyVipPassCode() {
+      if (latestVipPassCode) {
+        copyTextToClipboard(latestVipPassCode, `VIP Pass code ${latestVipPassCode} copied.`);
+      }
+    }
+
+    function closeAllModals() {
+      document.getElementById('bookingModal').classList.add('hidden');
+      document.getElementById('rsvpModal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    /* =======================================================================
+       7. FORM VALIDATION & SUBMISSIONS
+    ======================================================================= */
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+    function setupForms() {
+      // Booking Modal Submission
+      const bookingForm = document.getElementById('bookingForm');
+      if (bookingForm) {
+        bookingForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('bookName').value.trim();
+          const email = document.getElementById('bookEmail').value.trim();
+          const service = document.getElementById('bookService').value;
+          const pkg = document.getElementById('bookPackage').value;
+          const date = document.getElementById('bookDate').value;
+          const guests = Number(document.getElementById('bookGuests').value);
+          const err = document.getElementById('bookingErrorMsg');
+
+          if (!name || !isValidEmail(email) || !date || !guests || guests < 10) {
+            err.textContent = 'Please complete all required fields with a valid email, target date, and at least 10 guests.';
+            err.classList.remove('hidden');
+            return;
+          }
+
+          err.classList.add('hidden');
+          const refCode = `AUR-${Math.floor(100000 + Math.random() * 900000)}`;
+          document.getElementById('bookingFormView').classList.add('hidden');
+          document.getElementById('bookingSuccessView').classList.remove('hidden');
+          document.getElementById('bookingSuccessSummary').textContent =
+            `Thank you, ${name}. Your consultation dossier for ${service} (${pkg}) on ${date} for approximately ${guests} guests has been assigned to a Senior Producer. Confirmation sent to ${email}.`;
+          document.getElementById('bookingRefBadge').textContent = `DOSSIER REF: ${refCode}`;
+
+          showToast('Consultation request confirmed.', 'success');
+          refreshIcons();
+        });
+      }
+
+      // RSVP Modal Submission (Live seat deduction + Digital VIP Pass)
+      const rsvpForm = document.getElementById('rsvpForm');
+      if (rsvpForm) {
+        rsvpForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const evt = UPCOMING_EVENTS.find((item) => item.id === activeRsvpEventId);
+          if (!evt) return;
+
+          const name = document.getElementById('rsvpName').value.trim();
+          const email = document.getElementById('rsvpEmail').value.trim();
+          const qty = parseInt(document.getElementById('rsvpGuestCount').value, 10) || 1;
+          const err = document.getElementById('rsvpErrorMsg');
+
+          if (!name || !isValidEmail(email)) {
+            err.textContent = 'Please enter your full name and a valid email for VIP pass delivery.';
+            err.classList.remove('hidden');
+            return;
+          }
+          if (qty > evt.seatsRemaining) {
+            err.textContent = `Only ${evt.seatsRemaining} seat(s) remain for this occasion.`;
+            err.classList.remove('hidden');
+            return;
+          }
+
+          // Live update remaining seats
+          evt.seatsRemaining -= qty;
+          renderEvents();
+
+          const randomTag = Math.random().toString(36).substring(2, 6).toUpperCase();
+          latestVipPassCode = `VIP-${evt.month}${evt.day}-${randomTag}`;
+
+          document.getElementById('rsvpFormView').classList.add('hidden');
+          document.getElementById('rsvpPassView').classList.remove('hidden');
+          document.getElementById('vipPassGuestBadge').textContent = qty === 1 ? 'ADMIT 1' : `ADMIT ${qty}`;
+          document.getElementById('vipPassEventName').textContent = evt.title;
+          document.getElementById('vipPassVenueDate').textContent = `${evt.month} ${evt.day}, ${evt.year} • ${evt.time} • ${evt.venue}`;
+          document.getElementById('vipPassHolder').textContent = name;
+          document.getElementById('vipPassCode').textContent = latestVipPassCode;
+          document.getElementById('vipPassEmailNote').textContent = `A high-resolution copy of this pass has been dispatched to ${email}.`;
+
+          showToast(`Digital VIP Pass issued for ${evt.title}.`, 'success');
+          refreshIcons();
+        });
+      }
+
+      // Main Contact Inquiry Dossier Form
+      const contactForm = document.getElementById('contactForm');
+      if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          let valid = true;
+
+          const rules = [
+            { id: 'contactName', test: (v) => v.trim().length >= 2, msg: 'Please enter your full name.' },
+            { id: 'contactEmail', test: (v) => isValidEmail(v), msg: 'Please provide a valid email address.' },
+            { id: 'contactPhone', test: (v) => v.trim().length >= 7, msg: 'Please provide a valid contact number.' },
+            { id: 'contactEventType', test: (v) => v !== '', msg: 'Please select an experience category.' },
+            { id: 'contactDate', test: (v) => v !== '', msg: 'Please select a preferred date.' },
+            { id: 'contactBudget', test: (v) => v !== '', msg: 'Please select an estimated investment range.' },
+            { id: 'contactMessage', test: (v) => v.trim().length >= 10, msg: 'Please share a brief vision note (min 10 characters).' }
+          ];
+
+          rules.forEach(({ id, test, msg }) => {
+            const field = document.getElementById(id);
+            const errEl = field.parentElement.querySelector('.error-msg');
+            if (!test(field.value)) {
+              valid = false;
+              field.style.borderBottomColor = '#be123c';
+              if (errEl) {
+                errEl.textContent = msg;
+                errEl.classList.remove('hidden');
+              }
+            } else {
+              field.style.borderBottomColor = '';
+              if (errEl) errEl.classList.add('hidden');
+            }
+          });
+
+          if (!valid) {
+            showToast('Please review the highlighted fields in your dossier.', 'error');
+            return;
+          }
+
+          const client = document.getElementById('contactName').value.trim();
+          const category = document.getElementById('contactEventType').value;
+          const date = document.getElementById('contactDate').value;
+
+          contactForm.classList.add('hidden');
+          document.getElementById('contactSuccessState').classList.remove('hidden');
+          document.getElementById('contactSuccessSummary').textContent =
+            `Thank you, ${client}. Your dossier for ${category} (${date}) has been received by our New York atelier. A Senior Producer will respond privately within 24 hours.`;
+
+          showToast('Event inquiry dossier submitted successfully.', 'success');
+          refreshIcons();
+        });
+      }
+
+      // Footer Newsletter Dispatch Form
+      const newsletterForm = document.getElementById('newsletterForm');
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('newsletterEmail');
+          if (!isValidEmail(input.value)) {
+            showToast('Please enter a valid email to join The Aurelia Dispatch.', 'error');
+            input.focus();
+            return;
+          }
+          input.value = '';
+          showToast('Welcome to The Aurelia Dispatch.', 'success');
+        });
+      }
+    }
+
+    function resetContactForm() {
+      const form = document.getElementById('contactForm');
+      form.reset();
+      form.classList.remove('hidden');
+      document.getElementById('contactSuccessState').classList.add('hidden');
+    }
+
+    /* =======================================================================
+       8. UTILITIES (MOBILE DRAWER, CLIPBOARD COPY, TOASTS, ICONS)
+    ======================================================================= */
+    function openMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.remove('pointer-events-none', 'opacity-0');
+      drawer.classList.add('pointer-events-auto', 'opacity-100');
+      document.body.classList.add('overflow-hidden');
+      document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.add('pointer-events-none', 'opacity-0');
+      drawer.classList.remove('pointer-events-auto', 'opacity-100');
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'false');
+    }
+
+    // Reliable iFrame-friendly clipboard copy using execCommand('copy')
+    function copyTextToClipboard(text, message) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, 99999);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(ok ? (message || 'Copied to clipboard.') : 'Please copy manually.', ok ? 'success' : 'error');
+      } catch (e) {
+        showToast('Clipboard copy unavailable in this browser.', 'error');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const meta = {
+        success: { border: 'border-bronze/60', icon: 'check-circle-2', color: 'text-bronzeLight' },
+        error: { border: 'border-rose-400/60', icon: 'alert-circle', color: 'text-rose-300' },
+        info: { border: 'border-ivory/25', icon: 'sparkles', color: 'text-bronze' }
+      }[type] || { border: 'border-bronze/60', icon: 'sparkles', color: 'text-bronzeLight' };
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto flex items-start gap-3 px-5 py-4 rounded-2xl bg-noir/95 backdrop-blur-xl border ${meta.border} text-ivory shadow-2xl text-xs sm:text-sm animate-fade-up`;
+      toast.innerHTML = `
+        <i data-lucide="${meta.icon}" class="w-4 h-4 ${meta.color} shrink-0 mt-0.5"></i>
+        <p class="flex-1 font-light leading-snug">${message}</p>
+        <button type="button" onclick="this.parentElement.remove()" aria-label="Dismiss" class="text-ivory/40 hover:text-ivory">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      `;
+      container.appendChild(toast);
+      refreshIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        toast.style.transition = 'all 0.35s ease';
+        setTimeout(() => toast.remove(), 350);
+      }, 4000);
+    }
+
+    function refreshIcons() {
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (e) {
+        // Silent fallback if icons CDN unavailable
+      }
+    }
+
+    /* =======================================================================
+       9. INITIALIZATION ON DOM READY
+    ======================================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeroSlides();
+      startHeroSlideshow();
+      renderServices();
+      renderEvents();
+      renderPackages();
+      renderTestimonials();
+      renderTeam();
+
+      setupEventFilters();
+      setupScrollChoreography();
+      setupObservers();
+      setupForms();
+      startTestimonialAutoplay();
+
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      if (mobileBtn) mobileBtn.addEventListener('click', openMobileDrawer);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeAllModals();
+          closeMobileDrawer();
+        }
+      });
+
+      refreshIcons();
+    });
+  </script>
+</body>
+</html>
